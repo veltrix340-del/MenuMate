@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Add New Table User</title>
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+
+    <style>
+        /* ---- Same styles as Reset Password ---- */
+        
+         :root {
+            --bg1: #0f172a;
+            --bg2: #111827;
+            --card: #0b1022cc;
+            --border: #24304a;
+            --text: #e5e7eb;
+            --muted: #9ca3af;
+            --brand: #60a5fa;
+            --brand-2: #38bdf8;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --warning: #f59e0b;
+        }
+        
+        * {
+            box-sizing: border-box
+        }
+        
+        html,
+        body {
+            height: 100%
+        }
+        
+        body {
+            margin: 0;
+            font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans";
+            color: var(--text);
+            background: radial-gradient(1200px 600px at 10% -10%, #1e3a8a33, transparent 60%), radial-gradient(900px 500px at 110% 110%, #0ea5e933, transparent 60%), linear-gradient(135deg, var(--bg1), var(--bg2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+        
+        .card {
+            width: 100%;
+            max-width: 520px;
+            background: linear-gradient(180deg, #0b132b, #0b1022) padding-box;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px #0008, inset 0 1px 0 #ffffff10;
+            overflow: hidden;
+            position: relative;
+            isolation: isolate;
+            animation: fadeUp .6s ease both;
+        }
+        
+        .card::before {
+            content: "";
+            position: absolute;
+            inset: -1px;
+            border-radius: 22px;
+            padding: 1px;
+            background: linear-gradient(135deg, #3b82f6, #22d3ee, #a78bfa);
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            animation: borderFlow 8s linear infinite;
+            opacity: .65;
+            z-index: -1;
+        }
+        
+        @keyframes borderFlow {
+            0% {
+                background-position: 0%
+            }
+            100% {
+                background-position: 200%
+            }
+        }
+        
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(14px)
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+        
+        .header {
+            padding: 22px 24px 8px;
+            border-bottom: 1px solid #ffffff10;
+        }
+        
+        .title {
+            margin: 0 0 4px 0;
+            font-weight: 700;
+            font-size: 1.35rem;
+        }
+        
+        .subtitle {
+            margin: 0;
+            color: var(--muted);
+            font-size: .95rem;
+        }
+        
+        .body {
+            padding: 20px 24px 24px
+        }
+        
+        .field {
+            display: block;
+            margin-bottom: 18px;
+        }
+        
+        .label {
+            display: flex;
+            justify-content: space-between;
+            font-size: .92rem;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+        }
+        
+        .input-wrap {
+            position: relative;
+        }
+        
+        .input-wrap input {
+            width: 100%;
+            background: #0b1227;
+            color: var(--text);
+            border: 1px solid #1e293b;
+            border-radius: 12px;
+            padding: 12px 44px 12px 14px;
+            font-size: 1rem;
+            outline: none;
+            transition: border .2s, box-shadow .2s;
+        }
+        
+        .input-wrap input:focus {
+            border-color: #2b5bd9;
+            box-shadow: 0 0 0 4px #2b5bd933;
+        }
+        
+        .input-wrap .toggle {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: 0;
+            cursor: pointer;
+            color: #93a4c6;
+            padding: 6px;
+            border-radius: 10px;
+        }
+        
+        .field.has-errors .input-wrap input {
+            border-color: var(--danger);
+            box-shadow: 0 0 0 4px #ef44441f
+        }
+        
+        ul.errorlist {
+            margin: 8px 0 0;
+            padding-left: 28px;
+            color: var(--danger);
+            font-size: .9rem;
+        }
+        
+        .strength {
+            display: flex;
+            gap: 6px;
+            margin-top: 10px;
+            align-items: center;
+        }
+        
+        .bar {
+            flex: 1;
+            height: 6px;
+            border-radius: 999px;
+            background: #1f2a44;
+            overflow: hidden;
+        }
+        
+        .bar>span {
+            display: block;
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #f87171, #fbbf24, #34d399, #60a5fa);
+            transition: width .35s ease;
+        }
+        
+        .strength .hint {
+            font-size: .85rem;
+            color: var(--muted)
+        }
+        
+        .match {
+            margin-top: 8px;
+            font-size: .92rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--muted);
+        }
+        
+        .match.ok {
+            color: var(--success)
+        }
+        
+        .match.bad {
+            color: var(--danger)
+        }
+        
+        .actions {
+            margin-top: 18px
+        }
+        
+        .btn {
+            width: 80%;
+            height: 45px;
+            cursor: pointer;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-weight: 700;
+            color: #0b1022;
+            background: linear-gradient(90deg, var(--brand), var(--brand-2));
+            box-shadow: 0 8px 24px #0ea5e955, inset 0 1px 0 #ffffffaa;
+            transition: transform .08s, box-shadow .2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 14px 34px #0ea5e977
+        }
+        
+        .note {
+            margin-top: 10px;
+            color: #8aa0c7;
+            font-size: .85rem;
+            text-align: center
+        }
+        
+        .foot {
+            padding: 12px 24px 20px;
+            border-top: 1px solid #ffffff10;
+            color: #7b8db3;
+            font-size: .85rem;
+            text-align: center
+        }
+        
+        .foot a {
+            color: #9cc7ff;
+            text-decoration: none
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <div class="header">
+            <h1 class="title">Add New Table User</h1>
+            <p class="subtitle">Fill in the details to create a new user.</p>
+        </div>
+
+        <div class="body">
+            <form method="post" novalidate>
+                {% csrf_token %}
+
+                <!-- Username -->
+                <div class="field {% if form.username.errors %}has-errors{% endif %}">
+                    <div class="label"><label for="id_username">Username</label></div>
+                    <div class="input-wrap">
+                        {{ form.username }}
+                    </div>
+                    {{ form.username.errors }}
+                </div>
+
+                <!-- Password -->
+                <div class="field {% if form.password1.errors %}has-errors{% endif %}">
+                    <div class="label"><label for="id_password1">Password</label></div>
+                    <div class="input-wrap">
+                        {{ form.password1 }}
+                        <button type="button" class="toggle" onclick="togglePassword('id_password1', this)">
+              <i class="bi bi-eye"></i>
+            </button>
+                    </div>
+                    {{ form.password1.errors }}
+
+                    <!-- Strength meter -->
+                    <div class="strength" id="strengthWrap">
+                        <div class="bar"><span id="strengthBar"></span></div>
+                        <div id="strengthText" class="hint">Start typing…</div>
+                    </div>
+                    <ul class="hint" style="margin:8px 0 0; padding-left:18px; color:#9fb0cf; font-size:.85rem; list-style:disc;">
+                        <li id="r-len">At least 8 characters</li>
+                        <li id="r-mix">Upper & lower case</li>
+                        <li id="r-num">At least one number</li>
+                        <li id="r-sym">At least one symbol</li>
+                    </ul>
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="field {% if form.password2.errors %}has-errors{% endif %}">
+                    <div class="label"><label for="id_password2">Confirm Password</label></div>
+                    <div class="input-wrap">
+                        {{ form.password2 }}
+                        <button type="button" class="toggle" onclick="togglePassword('id_password2', this)">
+              <i class="bi bi-eye"></i>
+            </button>
+                    </div>
+                    {{ form.password2.errors }}
+
+                    <div id="matchState" class="match"><i class="bi bi-dot"></i> Waiting for input…</div>
+                </div>
+
+                <div class="actions">
+                    <button type="submit" class="btn">Create User</button>
+                    <a href="{% url 'admin_dashboard' %}?page=settings" class="btn" style="text-decoration: none;">Cancel</a>
+                    <div class="note">The user will be added to the table after creation.</div>
+                </div>
+            </form>
+        </div>
+
+        <div class="foot">
+            Need help? <a href="#">Contact support</a>
+        </div>
+    </div>
+
+    <script>
+        // Toggle eye button
+        function togglePassword(id, btn) {
+            const input = document.getElementById(id);
+            const icon = btn.querySelector('i');
+            const isHidden = input.type === 'password';
+            input.type = isHidden ? 'text' : 'password';
+            icon.classList.toggle('bi-eye', !isHidden);
+            icon.classList.toggle('bi-eye-slash', isHidden);
+        }
+
+        // Password strength + match
+        (function() {
+            const pw1 = document.getElementById('id_password1');
+            const pw2 = document.getElementById('id_password2');
+            const bar = document.getElementById('strengthBar');
+            const text = document.getElementById('strengthText');
+            const match = document.getElementById('matchState');
+            const rules = {
+                len: document.getElementById('r-len'),
+                mix: document.getElementById('r-mix'),
+                num: document.getElementById('r-num'),
+                sym: document.getElementById('r-sym'),
+            };
+
+            function score(pw) {
+                let s = 0;
+                const rx = {
+                    len: pw.length >= 8,
+                    low: /[a-z]/.test(pw),
+                    up: /[A-Z]/.test(pw),
+                    num: /\d/.test(pw),
+                    sym: /[^A-Za-z0-9]/.test(pw)
+                };
+                if (rx.len) s++;
+                if (rx.low && rx.up) s++;
+                if (rx.num) s++;
+                if (rx.sym) s++;
+
+                rules.len.style.color = rx.len ? 'var(--success)' : '#9fb0cf';
+                rules.mix.style.color = (rx.low && rx.up) ? 'var(--success)' : '#9fb0cf';
+                rules.num.style.color = rx.num ? 'var(--success)' : '#9fb0cf';
+                rules.sym.style.color = rx.sym ? 'var(--success)' : '#9fb0cf';
+
+                return s;
+            }
+
+            function update() {
+                const s = score(pw1.value);
+                const pct = [0, 25, 50, 75, 100][s];
+                bar.style.width = pct + '%';
+                if (s <= 1) {
+                    text.textContent = 'Weak';
+                    text.style.color = 'var(--danger)';
+                } else if (s === 2) {
+                    text.textContent = 'Fair';
+                    text.style.color = 'var(--warning)';
+                } else if (s === 3) {
+                    text.textContent = 'Good';
+                    text.style.color = '#34d399';
+                } else if (s === 4) {
+                    text.textContent = 'Strong';
+                    text.style.color = 'var(--brand)';
+                } else {
+                    text.textContent = 'Start typing…';
+                    text.style.color = '#9fb0cf';
+                }
+
+                if (pw2.value.length === 0) {
+                    match.className = 'match';
+                    match.innerHTML = '<i class="bi bi-dot"></i> Waiting for input…';
+                } else if (pw1.value === pw2.value) {
+                    match.className = 'match ok';
+                    match.innerHTML = '<i class="bi bi-check-circle"></i> Passwords match';
+                } else {
+                    match.className = 'match bad';
+                    match.innerHTML = '<i class="bi bi-x-circle"></i> Passwords do not match';
+                }
+            }
+
+            pw1 && pw1.addEventListener('input', update);
+            pw2 && pw2.addEventListener('input', update);
+            update();
+        })();
+    </script>
+</body>
+
+</html>

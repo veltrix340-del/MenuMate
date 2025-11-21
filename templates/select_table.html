@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Select Table</title>
+</head>
+<body>
+    <h1>Enter Your Table Number</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="table_number">Table Number:</label>
+        <input type="number" name="table_number" id="table_number" required min="1">
+        <button type="submit">Continue</button>
+    </form>
+
+    {% if messages %}
+        {% for message in messages %}
+            <p style="color: red;">{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+</body>
+</html>

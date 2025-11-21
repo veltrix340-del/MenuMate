@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kitchen Dashboard</title>
+    <style>
+        :root {
+            --primary: #e74c3c;
+            --secondary: #2c3e50;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #27ae60;
+            --warning: #f39c12;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            /* float: left; */
+            margin-left: 8%;
+        }
+        
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px 0;
+            text-align: center;
+            margin-bottom: 20px;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .kitchen-status {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            justify-content: center;
+            margin-left: 36%;
+        }
+        
+        .status-card {
+            background-color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            min-width: 150px;
+        }
+        
+        .status-count {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        
+        .pending .status-count {
+            color: var(--primary);
+        }
+        
+        .preparing .status-count {
+            color: var(--warning);
+        }
+        
+        .completed .status-count {
+            color: var(--success);
+        }
+        
+        .orders-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        
+        .order-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .order-header {
+            background-color: var(--secondary);
+            color: white;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .order-table {
+            font-weight: bold;
+        }
+        
+        .order-time {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        
+        .order-items {
+            padding: 15px;
+        }
+        
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .order-item:last-child {
+            border-bottom: none;
+        }
+        
+        .item-quantity {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .order-actions {
+            display: flex;
+            border-top: 1px solid #eee;
+        }
+        
+        .action-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background-color: transparent;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        .action-btn:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .accept-btn {
+            color: var(--success);
+        }
+        
+        .complete-btn {
+            color: var(--warning);
+        }
+        
+        .deliver-btn {
+            color: var(--primary);
+        }
+        
+        .order-status {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .status-pending {
+            background-color: #ffebee;
+            color: var(--primary);
+        }
+        
+        .status-preparing {
+            background-color: #fff8e1;
+            color: var(--warning);
+        }
+        
+        .status-ready {
+            background-color: #e8f5e9;
+            color: var(--success);
+        }
+        
+        .special-notes {
+            background-color: #fffde7;
+            padding: 10px;
+            margin: 10px 0;
+            border-left: 3px solid #fbc02d;
+            font-size: 14px;
+        }
+        
+        .no-orders {
+            text-align: center;
+            padding: 40px;
+            color: #777;
+            grid-column: 1 / -1;
+        }
+
+        .red-btn {
+            height: 30px;
+            width: auto;
+            padding: 5px;
+            border: none;
+            outline: none;
+            color: #fff;
+            font-size: 16px;
+            border-radius: 4px;
+            background-color: red;
+            color: white;
+        }
+        .yellow-btn {
+            height: 30px;
+            width: auto;
+            padding: 5px;
+            border: none;
+            outline: none;
+            color: #fff;
+            font-size: 16px;
+            border-radius: 4px;
+            background-color: orange;
+            color: white;
+        }
+        .green-btn {
+            height: 30px;
+            width: auto;
+            padding: 5px;
+            border: none;
+            outline: none;
+            color: #fff;
+            font-size: 16px;
+            border-radius: 4px;
+            background-color: green;
+            color: white;
+        }
+.status-pending {
+    color: red;
+}
+.status-ready {
+    color: orange;
+    background-color: #fff8e1;
+}
+.status-delivered {
+    color: green;
+    background-color: #e8f5e9;
+}
+
+.orders-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.order-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+}
+
+.order-header, .order-status, .order-items, .order-actions {
+    margin-bottom: 12px;
+}
+
+
+/* Toggle buttons */
+
+.toggle-container{
+            height: 40vh;
+            width: 30%;
+            float: right;
+            /* background: #ff0000; */
+            justify-content: center;
+            margin-top: 10%;
+        }
+
+        .toggle-btn-container{
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px;
+        }
+
+        .toggle-btn {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 4px;
+        }
+        
+        .toggle-btn:hover {
+            background-color: #45a049;
+        }
+        
+        .toggle-btn.active {
+            background-color: #2E7D32;
+        }
+
+        .section {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+        }
+
+        .card{
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin: 20px 30px 20px 0;
+        }
+
+        .card h3{
+            margin: 20px 5px 30px 0;
+        }
+
+        .table{
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td{
+            padding: 12px 15px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+
+        .table th {
+            background-color: #f9f9f9;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .table tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding-right: 30px; /* Make space for clear button */
+        }
+
+        .clear-btn {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: #888;
+            line-height: 1;
+        }
+
+                /* Notification */
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 55%;
+            transform: translateX(-50%);
+            background-color: #4caf50; 
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-weight: bold;
+            z-index: 9999;
+            text-align: center;
+            max-width: 90%;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            animation: fadeOut 1s ease-in 3s forwards;
+        }
+        
+        .notification.success {
+            background-color: #4caf50;
+            /* Green for available */
+        }
+        
+        .notification.error {
+            background-color: #f44336;
+            /* Red for out of stock */
+        }
+
+        #notification-messages p {
+    margin: 5px 0;
+}
+#notification-messages {
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    border-radius: 4px;
+}
+#notification-icon {
+    padding: 5px;
+}
+
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo">Cassa Cassandra - Kitchen</div>
+    </header>
+
+            {% if messages %} {% for message in messages %}
+        <div class="notification {{ message.tags }}">
+            <p>{{ message }}</p>
+        </div>
+        {% endfor %} {% endif %}
+    
+    <div class="toggle-container">
+        <!-- Toggle button -->
+        <div class="toggle-btn-container">
+            <button id="showItemsBtn" class="toggle-btn active">Show Total Items</button>
+            <button id="showEditBtn" class="toggle-btn">Show Edit Section</button>
+        </div>
+    
+        <!-- Total Items Needed -->
+        <div id="itemSection" class="card section active">
+            <h3>Total Items Needed</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Total Qty</th>
+                        <th>Tables</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in kitchen_totals %}
+                    <tr>
+                        <td>{{ item.item_name }}</td>
+                        <td>{{ item.total_qty }}</td>
+                        <td>{{ item.tables }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="3">No active items.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <!-- Edit section -->
+        <div class="card section" id="editSection">
+            <h3>Edit Items</h3>
+            <form method="get" style="display: flex; align-items: center; gap: 8px; width: 100%;">
+                <input type="hidden" name="category" value="{{ current_category }}">
+                <div class="search-input-wrapper">
+                    <input
+                        type="text"
+                        name="q"
+                        class="search-input"
+                        placeholder="Search menu items..."
+                        value="{{ q|default_if_none:'' }}"
+                        id="searchInput"
+                    >
+        
+                    {% if q %}
+                    <button type="submit" name="q" value="" class="clear-btn" title="Clear Search">×</button>
+                    {% endif %}
+                </div>
+                <button type="submit" class="search-btn">Search</button>
+            </form>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in menu_items %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.category }}</td>
+                        <td>
+                            <form method="post" action="{% url 'toggle_availability' item.id %}?user=kitchen">
+                                {% csrf_token %}
+                                <button type="submit" style="height: 40px; width: 100px; color: #fff; font-size: 14px;border-radius: 4px; border: none; outline: none; cursor: pointer; {% if item.delete_status == 1 %} background-color: green; {% else %} background-color: red; {% endif %}">
+                                    {% if item.delete_status == 1 %}
+                                    <span>Available</span>
+                                    {% else %}
+                                        <span>Out of Stock</span>
+                                    {% endif %}
+                                </button>
+                            </form>
+                        </td>
+                        </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4">No items in this category.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+         </div>
+    </div>
+
+    <div class="container">
+        <div class="kitchen-status">
+            <div class="status-card pending">
+                <div>Pending</div>
+                <div class="status-count">{{ pending_count }}</div>
+                <div>Orders</div>
+            </div>
+            <div class="status-card preparing">
+                <div>Preparing</div>
+                <div class="status-count">{{ preparing_count }}</div>
+                <div>Orders</div>
+            </div>
+            <div class="status-card completed">
+                <div>Completed</div>
+                <div class="status-count">{{ completed_count }}</div>
+                <div>Today</div>
+            </div>
+        </div>
+<!-- kitchen.html -->
+        <h3 class="orders-title">Orders</h3>
+        <div class="orders-container">
+        {% for order in orders %}
+            <div class="order-card" id="order-{{ order.id }}">
+<!-- Header -->
+                <div class="order-header">
+                    <div class="order-table">Table {{ order.table_number }}</div>
+                    <div class="order-time">{{ order.created_at }}</div>
+                </div>
+
+        <!-- Status Display -->
+                <div class="order-status 
+                {% if order.status == 'Accept' %}status-pending
+                {% elif order.status == 'Ready' %}status-ready
+                {% elif order.status == 'Delivered' %}status-delivered
+                {% endif %}">
+                {{ order.status }}
+                </div>
+
+        <!-- All Items in this order -->
+                <div class="order-items">
+                {% for item in order.items.all %}
+                    <div class="order-item">
+                        <span>{{ item.item.name }}</span>
+                        <span class="item-quantity">× {{ item.quantity }}</span>
+                    </div>
+                {% endfor %}
+                </div>
+        <!-- Action Button -->
+                <div class="order-actions">
+                    <form method="post" class="status-form">
+                    {% csrf_token %}
+                        <input type="hidden" name="order_id" value="{{ order.id }}">
+                        <input type="hidden" name="action" value="progress">
+                        <button type="submit"
+                        class="{% if order.status == 'Accept' %}red-btn{% elif order.status == 'Ready' %}yellow-btn{% elif order.status == 'Delivered' %}green-btn{% endif %}">
+                        {{ order.status }}
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+            
+            <!-- <div class="item-summary">
+                <h3>Total Items in Kitchen</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Qty</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for name, qty in item_summary.items %}
+                        <tr>
+                            <td>{{ name }}</td>
+                            <td>{{ qty }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div> -->
+
+
+    </div>
+    </div>
+<script>
+    document.querySelectorAll('.status-form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            const button = form.querySelector('button');
+            if (button.textContent.trim() === 'Delivered') {
+                e.preventDefault();  // Stop immediate submission
+
+                // Wait 2 seconds and then submit remove request
+                setTimeout(() => {
+                    const hiddenInput = document.createElement('input');
+                    hiddenInput.type = 'hidden';
+                    hiddenInput.name = 'action';
+                    hiddenInput.value = 'remove';
+                    form.appendChild(hiddenInput);
+                    form.submit();
+                }, 500);
+            }
+        });
+    });
+
+        // Tabs
+    document.addEventListener('DOMContentLoaded', function () {
+    const showItemsBtn = document.getElementById('showItemsBtn');
+    const showEditBtn = document.getElementById('showEditBtn');
+    const itemsSection = document.getElementById('itemSection');
+    const editSection = document.getElementById('editSection');
+
+    // Load saved view from localStorage
+    const savedSection = localStorage.getItem('activeSection') || 'items';
+
+    function showItems() {
+        itemsSection.classList.add('active');
+        editSection.classList.remove('active');
+        showItemsBtn.classList.add('active');
+        showEditBtn.classList.remove('active');
+        localStorage.setItem('activeSection', 'items');
+    }
+
+    function showEdit() {
+        itemsSection.classList.remove('active');
+        editSection.classList.add('active');
+        showItemsBtn.classList.remove('active');
+        showEditBtn.classList.add('active');
+        localStorage.setItem('activeSection', 'edit');
+    }
+
+    // Set initial view
+    if (savedSection === 'edit') {
+        showEdit();
+    } else {
+        showItems();
+    }
+
+    // Event listeners
+    showItemsBtn.addEventListener('click', showItems);
+    showEditBtn.addEventListener('click', showEdit);
+
+    // Auto-reload only when not in edit view
+    setInterval(() => {
+        const editIsActive = document.getElementById('editSection')?.classList.contains('active');
+        if (!editIsActive) {
+            location.reload();
+        }
+    }, 5000);
+});
+
+
+    </script>
+</body>
+</html>

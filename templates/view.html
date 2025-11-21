@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Table Summary</title>
+    <style>
+         :root {
+            --bg-light: #ffffff;
+            --bg-dark: #f4f4f6;
+            --accent: #4caf50;
+            --text-primary: #212121;
+            --text-secondary: #757575;
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            --border-radius: 12px;
+            --font: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: var(--font);
+        }
+        
+        body {
+            background-color: #e9ecf3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background-color: var(--bg-light);
+            width: 420px;
+            padding: 28px 24px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        
+        .top-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--bg-dark);
+            padding: 14px 18px;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .bill-section {
+            background-color: var(--bg-dark);
+            border-radius: var(--border-radius);
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.04);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            padding: 10px 0;
+            border-bottom: 2px solid #ccc;
+            font-weight: bold;
+            font-size: 15px;
+            color: var(--text-secondary);
+            background-color: var(--bg-dark);
+        }
+        
+        .item-list {
+            max-height: 160px;
+            overflow-y: auto;
+        }
+        
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .row:last-of-type {
+            border-bottom: none;
+        }
+        
+        .col {
+            text-align: center;
+            font-size: 15px;
+            color: var(--text-primary);
+        }
+        
+        .total {
+            text-align: right;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 12px 10px 8px;
+            color: var(--text-primary);
+            border-top: 2px solid #ccc;
+        }
+        
+        .actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .button {
+            padding: 14px;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            font-size: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .status {
+            background-color: #e6f4ea;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+        
+        .status:hover {
+            background-color: #d7ecd9;
+        }
+        
+        .pay {
+            background-color: #e3f2fd;
+            color: #0d47a1;
+            border: 1px solid #90caf9;
+        }
+        
+        .pay:hover {
+            background-color: #d0e5f8;
+        }
+        
+        .free {
+            background-color: #fff3e0;
+            color: #e65100;
+            border: 1px solid #ffcc80;
+        }
+        
+        .free:hover {
+            background-color: #ffecb3;
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                width: 90%;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="top-info">
+            <div>🍽 Table 1</div>
+            <div>📅 2/12/25 5:30PM</div>
+        </div>
+
+        <div class="bill-section">
+            <div class="header">
+                <div class="col">Item</div>
+                <div class="col">Qty</div>
+                <div class="col">Price</div>
+            </div>
+
+            <div class="item-list">
+                <div class="row">
+                    <div class="col">Burger</div>
+                    <div class="col">2</div>
+                    <div class="col">200</div>
+                </div>
+
+                <div class="row">
+                    <div class="col">Fries</div>
+                    <div class="col">1</div>
+                    <div class="col">100</div>
+                </div>
+
+                <div class="row">
+                    <div class="col">Coke</div>
+                    <div class="col">3</div>
+                    <div class="col">90</div>
+                </div>
+
+                <div class="row">
+                    <div class="col">Pizza</div>
+                    <div class="col">1</div>
+                    <div class="col">300</div>
+                </div>
+
+                <div class="row">
+                    <div class="col">Pasta</div>
+                    <div class="col">1</div>
+                    <div class="col">250</div>
+                </div>
+
+                <div class="row">
+                    <div class="col">Water</div>
+                    <div class="col">2</div>
+                    <div class="col">60</div>
+                </div>
+
+                <div class="row">
+                    <div class="col">Ice Cream</div>
+                    <div class="col">1</div>
+                    <div class="col">120</div>
+                </div>
+            </div>
+
+            <div class="total">Total: ₹1120</div>
+        </div>
+
+        <div class="actions">
+            <div class="button status">✅ Status: Delivered</div>
+            <div class="button pay">💳 Payment</div>
+            <div class="button free">🧹 Free Table</div>
+        </div>
+    </div>
+
+</body>
+
+</html>

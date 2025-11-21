@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Bill - Hotel Ordering System</title>
+    <style>
+         :root {
+            --primary: #2c3e50;
+            --secondary: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #27ae60;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: var(--dark);
+        }
+        
+        .container {
+            height: auto;
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .hotel-info h1 {
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        
+        .hotel-info p {
+            color: #777;
+        }
+        
+        .bill-title {
+            font-size: 24px;
+            color: var(--primary);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .bill-details {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+        
+        .bill-from,
+        .bill-to {
+            flex: 1;
+        }
+        
+        .bill-from h3,
+        .bill-to h3 {
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+        
+        .bill-meta {
+            text-align: right;
+        }
+        
+        .bill-meta p {
+            margin-bottom: 5px;
+        }
+        
+        .bill-meta strong {
+            color: var(--primary);
+        }
+        
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        
+        .items-table th {
+            background-color: #f9f9f9;
+            padding: 12px 15px;
+            text-align: left;
+            color: #555;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .items-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .items-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .text-right {
+            text-align: right;
+        }
+        
+        .total-section {
+            display: flex;
+            justify-content: flex-end;
+            /* margin-bottom: 30px; */
+            /* margin-top: -20px; */
+        }
+        
+        .total-table {
+            width: 300px;
+            border-collapse: collapse;
+        }
+        
+        .total-table td {
+            padding: 10px 15px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+
+        .total-table tr:last-child td {
+            border-bottom: none;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .thank-you {
+            text-align: center;
+            /* margin-top: 40px; */
+            padding-top: 20px;
+            color: #777;
+        }
+        
+        .actions {
+            width: 100%;
+            /* background-color: red; */
+            /* display: block; */
+            justify-content: center;
+            gap: 15px;
+            /* margin-top: 30px; */
+            border-top: 1.5px solid #e2e2e2;
+            border-bottom: 1.5px solid #e2e2e2;
+            padding: 20px 0 15px;
+            text-align: center;
+            /* place-content: center;
+            place-items: center;
+            align-items: center;
+            position: relative; */
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #1a252f;
+        }
+        
+        .btn-outline {
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .btn-outline:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .print-only {
+            display: none;
+        }
+        
+        @media print {
+            body {
+                background-color: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                padding: 0;
+                max-width: 100%;
+            }
+            .no-print {
+                display: none;
+            }
+            .print-only {
+                display: block;
+            }
+        }
+    </style>
+    <style>
+.btn-gradient {
+    background: linear-gradient(135deg, #ff9a44, #f83600);
+    color: #fff;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.btn-gradient:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 18px rgba(248, 54, 0, 0.4);
+}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="hotel-info">
+                <h1>Casa Cassandra</h1>
+                <p>123 Restaurant Street, Food City</p>
+                <p>Phone: (123) 456-7890 | Email: info@casacassandra.com</p>
+            </div>
+            <div class="bill-meta">
+                <p><strong>Table:</strong> <span id="waiter-name">{{table}} {{ quantity }} </span></p>
+                <p><strong>Bill No:</strong> <span id="bill-number">{{bill_number}}</span></p>
+                <p><strong>Date:</strong> <span id="bill-date">{{bill_date}}</span></p>
+                <p><strong>Time:</strong> <span id="bill-time">{{bill_time}}</span></p>
+            </div>
+        </div>
+<div style="height: 250px; overflow:scroll; scrollbar-width: none;">
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th style="width: 48%;">Item</th>
+                <th style="width: 20%;">Price</th>
+                <th style="width: 15%;">Qty</th>
+                <th style="width: 15%; text-align: right;">Amount</th>
+            </tr>
+        </thead>
+        <tbody id="bill-items">
+            {% for item in items_summary %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>Rs. {{ item.price }}</td>
+                <td>{{ item.qty }}</td>
+                <td class="text-right">Rs. {{item.amount|floatformat:2}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+    <div class="total-section" style="margin-top: 30px;">
+        <table class="total-table">
+            <tr>
+                <td>Subtotal:</td>
+                <td class="text-right" id="subtotal">Rs. {{subtotal}}</td>
+            </tr>
+            <tr>
+                <td>Tax (10%):</td>
+                <td class="text-right" id="tax">Rs. {{tax}}</td>
+            </tr>
+            <tr>
+                <td>Service Charge (5%):</td>
+                <td class="text-right" id="service-charge">Rs. {{service_charge}}</td>
+            </tr>
+            <tr>
+                <td>Total:</td>
+                <td class="text-right" id="total">Rs. {{total}}</td>
+            </tr>
+        </table>
+    </div>
+
+        
+
+        <br>
+       
+            {% if request.user.is_superuser %}
+            <div style=" width: 100%; align-items: center; justify-content: center; display: flex;"> <a href="{% url 'admin_dashboard' %}?page=paymentdtls" class="btn btn-primary" style="justify-self: center;">Admin Dashboard</a></div>
+            
+    
+            </div> <center>
+           
+            {% else %}
+            <div class="actions no-print">
+                <form action="{% url 'confirm_pay' %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                <button type="submit" class="btn btn-primary" id="print-btn">Pay</button>
+                <a href="{% url 'product_view' product_type product_id %}" class="btn btn-outline">Back to Menu</a></form>
+                <form  action="{% url 'confirm_cash' %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary" id="cash-btn">Cash</button>
+                </form>
+                <div style="text-align:center; margin-top:25px;" class="no-print">
+    <button type="button" class="btn btn-gradient" onclick="openFeedback()">💬 Give Feedback</button>
+</div>
+                <div class="thank-you">
+                    <p>Thank you for dining with us!</p>
+                    <p class="print-only">Please visit us again soon</p>
+                </div>
+            </div>
+        {% endif %}
+        </center>
+    </div>
+
+</body>
+<script>
+function openFeedback() {
+    const existingRating = {{ payment.rating|default:"0" }};
+    const existingFeedback = "{{ payment.feedback|default:''|escapejs }}";
+
+    Swal.fire({
+        title: '<h2 style="font-family:sans-serif; font-weight:600; color:#333;">Rate Your Dining Experience</h2>',
+        html: `
+            <div style="margin:15px 0;">
+                <div id="stars" style="display:flex; justify-content:center; gap:8px; font-size:40px; cursor:pointer; color:#ddd;">
+                    <i class="fa fa-star" data-value="1"></i>
+                    <i class="fa fa-star" data-value="2"></i>
+                    <i class="fa fa-star" data-value="3"></i>
+                    <i class="fa fa-star" data-value="4"></i>
+                    <i class="fa fa-star" data-value="5"></i>
+                </div>
+            </div>
+            <textarea id="feedbackText" rows="3" placeholder="Write your feedback here..." 
+                style="width:100%; padding:12px; border:1px solid #ccc; border-radius:8px; font-size:15px; resize:none;">${existingFeedback}</textarea>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Submit Feedback',
+        focusConfirm: false,
+        customClass: { popup: 'premium-popup' },
+        preConfirm: () => {
+            const rating = document.querySelectorAll('#stars .fa-star.selected').length;
+            const feedback = document.getElementById('feedbackText').value;
+            if (!rating && !feedback) {
+                Swal.showValidationMessage('Please provide a rating or feedback.');
+                return false;
+            }
+            return { rating, feedback };
+        },
+        didOpen: () => {
+            // ⭐ Initialize stars
+            const stars = document.querySelectorAll('#stars .fa-star');
+            stars.forEach((star, index) => {
+                // prefill existing rating
+                if (index < existingRating) {
+                    star.classList.add('selected');
+                    star.style.color = '#f39c12';
+                }
+                star.addEventListener('click', () => {
+                    stars.forEach((s, i) => {
+                        s.classList.toggle('selected', i <= index);
+                        s.style.color = i <= index ? '#f39c12' : '#ddd';
+                    });
+                });
+            });
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // AJAX POST feedback
+            fetch("{% url 'pay' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(result.value)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Thank you!',
+                        text: 'Your feedback has been submitted.',
+                        confirmButtonColor: '#f83600'
+                    });
+                } else {
+                    Swal.fire('Oops...', data.message || 'Something went wrong!', 'error');
+                }
+            })
+            .catch(() => {
+                Swal.fire('Oops...', 'Network error. Please try again!', 'error');
+            });
+        }
+    });
+}
+</script>
+
+<style>
+.premium-popup {
+    border-radius: 20px !important;
+    padding: 25px !important;
+    box-shadow: 0 10px 35px rgba(0,0,0,0.2);
+}
+.swal2-confirm {
+    background: linear-gradient(135deg, #ff9a44, #f83600) !important;
+    border-radius: 25px !important;
+    padding: 10px 25px !important;
+    font-size: 16px !important;
+    font-weight: bold !important;
+}
+.swal2-cancel {
+    border-radius: 25px !important;
+    padding: 10px 25px !important;
+}
+</style>
+
+</html>

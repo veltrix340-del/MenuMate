@@ -1,0 +1,2379 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Ordering System - Admin Dashboard</title>
+    <style>
+         :root {
+            --primary: #3498db;
+            --secondary: #2c3e50;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            display: flex;
+            min-height: 100vh;
+            background-color: #f5f5f5;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background-color: var(--secondary);
+            color: white;
+            padding: 20px 0;
+            transition: width 0.3s;
+        }
+        
+        .sidebar.collapsed {
+            width: 70px;
+        }
+        
+        .sidebar.collapsed .logo h2,
+        .sidebar.collapsed .nav-item span {
+            display: none;
+        }
+        
+        .sidebar.collapsed .logo {
+            padding: 0 10px 20px;
+        }
+        
+        .sidebar.collapsed .nav-item {
+            text-align: center;
+            padding: 12px 10px;
+        }
+        
+        .sidebar.collapsed .nav-item i {
+            margin-right: 0;
+            font-size: 20px;
+        }
+        
+        .logo {
+            text-align: center;
+            padding: 0 20px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .logo h2 {
+            font-size: 20px;
+            transition: display 0.3s;
+        }
+        
+        .toggle-sidebar {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            position: absolute;
+            top: 20px;
+            background-color: var(--secondary);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .nav-menu {
+            list-style: none;
+            position: relative;
+        }
+        
+        .nav-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+        }
+        
+        .nav-item:hover,
+        .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .nav-item i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            transition: margin-left 0.3s;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .page-title h1 {
+            font-size: 24px;
+            color: var(--secondary);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+.stat-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    padding: 20px;
+    flex: 1 1 200px;
+    min-width: 200px;
+    transition: transform 0.2s;
+}
+        
+   .stat-title {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 8px;
+}
+        
+        .stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1E3A8A; /* Premium blue */
+}
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+        
+        .stat-change {
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .stat-change.positive {
+            color: var(--success);
+        }
+        
+        .stat-change.negative {
+            color: var(--danger);
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .card-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 8px 15px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        .btn-warning {
+            background-color: var(--warning);
+            color: white;
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid #ddd;
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .table th,
+        .table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .table th {
+            background-color: #f9f9f9;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .table tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .status-active {
+            background-color: #e8f5e9;
+            color: var(--success);
+            width: 80px;
+            text-align: center;
+        }
+        
+        .status-inactive {
+            background-color: #ffebee;
+            color: var(--danger);
+            width: 80px;
+            text-align: center;
+        }
+        
+        .status-pending {
+            background-color: #fff8e1;
+            color: var(--warning);
+            width: 80px;
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .modal,
+        .view-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+        
+        .modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #777;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+        
+        .tab.active {
+            border-bottom-color: var(--primary);
+            color: var(--primary);
+            font-weight: 500;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .search-bar {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px 0 0 4px;
+            font-size: 14px;
+        }
+        
+        .search-btn {
+            padding: 10px 15px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+        }
+        
+        .chart-container {
+            height: 300px;
+            margin-top: 20px;
+        }
+        /* Notification */
+        
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 55%;
+            transform: translateX(-50%);
+            background-color: #4caf50;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-weight: bold;
+            z-index: 9999;
+            text-align: center;
+            max-width: 90%;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            animation: fadeOut 1s ease-in 3s forwards;
+        }
+        
+        .notification.success {
+            background-color: #4caf50;
+            /* Green for available */
+        }
+        
+        .notification.error {
+            background-color: #f44336;
+            /* Red for out of stock */
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+            }
+            .sidebar .logo h2,
+            .sidebar .nav-item span {
+                display: none;
+            }
+            .sidebar .logo {
+                padding: 0 10px 20px;
+            }
+            .sidebar .nav-item {
+                text-align: center;
+                padding: 12px 10px;
+            }
+            .sidebar .nav-item i {
+                margin-right: 0;
+                font-size: 20px;
+            }
+            .toggle-sidebar {
+                display: none;
+            }
+        }
+        
+        .search-input-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 300px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding-right: 30px;
+            /* Make space for clear button */
+        }
+        
+        .clear-btn {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: #888;
+            line-height: 1;
+        }
+        /* View */
+        
+         :root {
+            --bg-light: #ffffff;
+            --bg-dark: #f4f4f6;
+            --accent: #4caf50;
+            --text-primary: #212121;
+            --text-secondary: #757575;
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            --border-radius: 12px;
+            --font: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .top-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--bg-dark);
+            padding: 14px 18px;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            width: 95%;
+        }
+        
+        .actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .bill-section {
+            background-color: var(--bg-dark);
+            border-radius: var(--border-radius);
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.04);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .bill-header {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            padding: 10px 0;
+            border-bottom: 2px solid #ccc;
+            font-weight: bold;
+            font-size: 15px;
+            color: var(--text-secondary);
+            background-color: var(--bg-dark);
+        }
+        
+        .item-list {
+            max-height: 160px;
+            overflow-y: auto;
+        }
+        
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .row:last-of-type {
+            border-bottom: none;
+        }
+        
+        .col {
+            text-align: center;
+            font-size: 15px;
+            color: var(--text-primary);
+        }
+        
+        .total {
+            text-align: right;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 12px 10px 8px;
+            color: var(--text-primary);
+            border-top: 2px solid #ccc;
+        }
+        
+        .button {
+            padding: 14px;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            font-size: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .status {
+            background-color: #e6f4ea;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+        
+        .status:hover {
+            background-color: #d7ecd9;
+        }
+        
+        .pay {
+            background-color: #e3f2fd;
+            color: #0d47a1;
+            border: 1px solid #90caf9;
+        }
+        
+        .pay:hover {
+            background-color: #d0e5f8;
+        }
+        
+        .free {
+            background-color: #fff3e0;
+            color: #e65100;
+            border: 1px solid #ffcc80;
+            width: 100%;
+        }
+        
+        .free:hover {
+            background-color: #ffecb3;
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                width: 90%;
+                padding: 20px;
+            }
+        }
+        
+        .close {
+            font-weight: bolder;
+        }
+        
+        #notification-messages p {
+            margin: 5px 0;
+        }
+        
+        #notification-messages {
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+        }
+        
+        #notification-icon {
+            padding: 5px;
+        }
+        
+        .feedback-card:hover {
+            background-color: #f8f8f8;
+            transition: background-color 0.3s;
+        }
+        /* dashboard */
+        
+        .dashboard-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .tab-link {
+            padding: 8px 16px;
+            border: none;
+            background-color: #eee;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        
+        .tab-link.active {
+            background-color: #007bff;
+            color: white;
+        }
+        
+        .tab-content {
+            animation: fadeEffect 0.3s;
+        }
+        
+        @keyframes fadeEffect {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        a.active button {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+<style>
+  .coc-notification {
+    position: fixed;
+    top: 2rem;
+    right: 45rem;
+    z-index: 9999;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    font-weight: 900;
+    animation: fadeInOut 3s ease forwards;
+  }
+  .coc-success { color: #16a34a; }   /* green */
+  .coc-error   { color: red; }   /* red */
+  .coc-warning { color: #f59e0b; }   /* amber */
+  .coc-info    { color: #2563eb; }   /* blue */
+
+  /* @keyframes fadeInOut {
+    0%   { opacity: 0; transform: translateY(-10px); }
+    10%  { opacity: 1; transform: translateY(0); }
+    90%  { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-10px); }
+  } */
+</style>
+
+
+</head>
+
+<body>
+    <div class="sidebar">
+        <button class="toggle-sidebar">≡</button>
+        <div class="logo">
+            <i>🏨</i>
+            <h2>Admin</h2>
+        </div>
+        <ul class="nav-menu">
+            <a href="{% url 'admin_dashboard' %}?page=dashboard" style="text-decoration: none; color: inherit;">
+                <li class="nav-item {% if request.GET.page == 'dashboard' or not request.GET.page %}active{% endif %}">
+                    <i>📊</i>
+                    <span clss="active">Dashboard</span>
+                </li>
+            </a>
+            <a href="{% url 'admin_dashboard' %}?page=menu" style="text-decoration: none; color: inherit;">
+                <li class="nav-item {% if request.GET.page == 'menu' %}active{% endif %}">
+                    <i>🍽</i>
+                    <span>Menu Items</span>
+                </li>
+            </a>
+            <a href="{% url 'admin_dashboard' %}?page=orders" style="text-decoration: none; color: inherit;">
+                <li class="nav-item {% if request.GET.page == 'orders' %}active{% endif %}">
+                    <i>📝</i>
+                    <span>Orders</span>
+                </li>
+            </a>
+            <a href="{% url 'admin_dashboard' %}?page=paymentdtls" style="text-decoration: none; color: inherit;">
+                <li class="nav-item {% if request.GET.page == 'paymentdtls' %}active{% endif %}">
+                    <i>👨‍🍳</i>
+                    <span>Payment Details</span>
+                </li>
+            </a>
+            <a href="{% url 'admin_dashboard' %}?page=staff" style="text-decoration: none; color: inherit;">
+                <li class="nav-item {% if request.GET.page == 'staff' %}active{% endif %}">
+                    <i>👥</i>
+                    <span>Staff</span>
+                </li>
+            </a>
+            <a href="{% url 'admin_dashboard' %}?page=feedback" style="text-decoration: none; color: inherit;">
+                <li class="nav-item {% if request.GET.page == 'feedback' %}active{% endif %}">
+                    <i>💬</i>
+                    <span>Feedback</span>
+                </li>
+            </a>
+            <a href="{% url 'admin_dashboard' %}?page=settings" style="text-decoration: none; color: inherit;">
+                <li class="nav-item {% if request.GET.page == 'settings' %}active{% endif %}">
+                    <i>⚙</i>
+                    <span>Settings</span>
+                </li>
+            </a>
+            <a style="text-decoration: none; color: inherit;" id="adminLogoutBtn">
+                <li class="nav-item">
+                    <i>🚪</i>
+                    <span>Logout</span>
+                </li>
+            </a>
+        </ul>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- ✅ Load Font Awesome from CDN -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+<style>
+/* Pulse glow animation */
+.glow-ring {
+    position: relative;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+    animation: pulseRing 2s infinite;
+}
+
+@keyframes pulseRing {
+    0% {
+        box-shadow: 0 0 0 0 rgba(79,172,254, 0.7),
+                    0 5px 15px rgba(0,0,0,0.5);
+    }
+    70% {
+        box-shadow: 0 0 0 20px rgba(79,172,254, 0),
+                    0 5px 15px rgba(0,0,0,0.4);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(79,172,254, 0),
+                    0 5px 15px rgba(0,0,0,0.4);
+    }
+}
+</style>
+
+<script>
+document.getElementById("adminLogoutBtn").addEventListener("click", function () {
+    Swal.fire({
+        showConfirmButton: false,
+        showCancelButton: false,
+        background: "rgba(20,20,20,0.95)",
+        html: `
+        <div style="
+            backdrop-filter: blur(16px);
+            background: rgba(24,24,24,0.9);
+            border-radius: 20px;
+            padding: 34px 28px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+            max-width: 420px;
+            margin: auto;
+            font-family: 'Inter', sans-serif;
+            text-align: center;
+            color:#eee;
+        ">
+            <!-- Avatar / Person Icon -->
+            <div style="margin-bottom:20px;">
+                <div class="glow-ring">
+                    <i class="fas fa-user" style="font-size:42px; color:#fff;"></i>
+                </div>
+            </div>
+
+            <!-- Heading -->
+            <h2 style="font-size:22px; font-weight:700; margin:0; color:#fff;">
+                Confirm Secure Logout
+            </h2>
+            <p style="color:#aaa; font-size:15px; margin-top:8px;">
+                Enter your admin password to proceed.
+            </p>
+
+            <!-- Password Input -->
+            <div style="margin:22px 0;">
+                <div style="position:relative; display:flex; align-items:center;">
+                    <input type="password" id="swal-password" 
+                        placeholder="Enter password" 
+                        style="flex:1; padding:12px 44px 12px 14px;
+                               border:1px solid #333; border-radius:12px;
+                               background:#111; color:#eee;
+                               font-size:15px; outline:none; transition:0.3s;"/>
+                    <i class="fas fa-eye-slash" id="togglePassword" 
+                        style="position:absolute; right:14px; cursor:pointer; color:#888;"></i>
+                </div>
+                <div id="errorMsg" style="color:#ff4d6d; font-size:13px; margin-top:6px; display:none;">
+                    ⚠ Incorrect password. Try again.
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div style="display:flex; justify-content:center; gap:14px;">
+                <button id="cancelBtn" style="
+                    flex:1; padding:12px; border:none; border-radius:10px;
+                    background:#2b2b2b; color:#ccc; font-weight:600;
+                    font-size:15px; cursor:pointer; transition:0.3s;">
+                    Cancel
+                </button>
+                <button id="confirmBtn" style="
+                    flex:1; padding:12px; border:none; border-radius:10px;
+                    background:linear-gradient(135deg,#4facfe,#00f2fe);
+                    color:#fff; font-weight:600; font-size:15px; cursor:pointer;
+                    transition:0.3s;">
+                    Logout
+                </button>
+            </div>
+        </div>
+        `,
+        didOpen: () => {
+            const input = document.getElementById("swal-password");
+            const confirmBtn = document.getElementById("confirmBtn");
+            const cancelBtn = document.getElementById("cancelBtn");
+            const togglePassword = document.getElementById("togglePassword");
+            const errorMsg = document.getElementById("errorMsg");
+
+            cancelBtn.addEventListener("click", () => Swal.close());
+
+            togglePassword.addEventListener("click", () => {
+                if (input.type === "password") {
+                    input.type = "text";
+                    togglePassword.classList.replace("fa-eye-slash", "fa-eye");
+                } else {
+                    input.type = "password";
+                    togglePassword.classList.replace("fa-eye", "fa-eye-slash");
+                }
+            });
+
+            confirmBtn.addEventListener("click", () => {
+                const password = input.value.trim();
+                if (!password) {
+                    errorMsg.innerText = "⚠ Password is required";
+                    errorMsg.style.display = "block";
+                    return;
+                }
+
+                fetch("{% url 'secure_admin_logout' %}", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}",
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ password: password }),
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: "success",
+                            background: "#1a1a1a",
+                            color: "#fff",
+                            title: "Logged out",
+                            text: "Session ended successfully.",
+                            timer: 1800,
+                            showConfirmButton: false,
+                        }).then(() => {
+                            window.location.href = data.redirect_url;
+                        });
+                    } else {
+                        errorMsg.innerText = "⚠ Incorrect password. Try again.";
+                        errorMsg.style.display = "block";
+                    }
+                })
+                .catch(() => {
+                    Swal.fire({
+                        icon: "error",
+                        background: "#1a1a1a",
+                        color: "#fff",
+                        title: "Error",
+                        text: "Server error. Please retry.",
+                    });
+                });
+            });
+        },
+    });
+});
+</script>
+
+    <div class="main-content">
+
+{% if messages %}
+  <div id="coc-container">
+    {% for message in messages %}
+      <div class="coc-notification {% if 'success' in message.tags %}coc-success{% elif 'error' in message.tags %}coc-error{% elif 'warning' in message.tags %}coc-warning{% else %}coc-info{% endif %}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+
+  <script>
+    // Auto-remove after animation
+    setTimeout(() => {
+      document.getElementById("coc-container")?.remove();
+    }, 3200);
+  </script>
+{% endif %}
+
+
+
+        <div class="dashboard">
+            <div class="header">
+                <div class="page-title">
+                    {% with request.GET.page as page %}{% if page == "dashboard" %}
+                    <h1>Dashboard</h1>{% elif page == "menu" %}
+                    <h1>Menu Items</h1>{% elif page == "orders" %}
+                    <h1>Orders</h1>{% elif page == "paymentdtls" %}
+                    <h1>Payment Details</h1>{% elif page == "staff" %}
+                    <h1>Staff</h1>{% elif page == "feedback" %}
+                    <h1>Feedback</h1>{% elif page == "settings" %}
+                    <h1>Settings</h1>{% endif %}{% endwith %}
+                </div>
+                <div id="payment-alerts" style="position: relative; text-align: right;">
+                    <span id="notification-icon" style="font-size: 24px; cursor: pointer; position: relative;">🔔
+                    <span id="notification-count" style="display: none; position: absolute; top: -8px;
+                    right: -8px; background: red; color: white; border-radius: 50%; padding: 2px 5px;
+                    font-size: 12px;">0
+                    </span>
+                    </span>
+                    <div id="notification-messages" style="display: none; position: absolute; top: 35px; right: 10px;
+                background: #fff; border: 1px solid #ccc; padding: 10px; max-width: 500px; z-index: 1000;
+                text-align: left; width: max-content;">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+        {% with request.GET.page as page %} {% if page == "menu" %}
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Menu Management</div>
+                <div class="card-actions">
+                    <button class="btn btn-primary" id="addMenuItemBtn">Add Item</button>
+                </div>
+            </div>
+            <div class="tabs">
+                <a href="{% url 'admin_dashboard' %}?page=menu&category=all" class="tab {% if current_category == 'all' %}active{% endif %}" style="text-decoration: none; color:black">All Items</a>
+                <a href="{% url 'admin_dashboard' %}?page=menu&category=bites" class="tab {% if current_category == 'bites' %}active{% endif %}" style="text-decoration: none; color:black">Bites</a>
+                <a href="{% url 'admin_dashboard' %}?page=menu&category=brews" class="tab {% if current_category == 'brews' %}active{% endif %}" style="text-decoration: none; color:black">Brews</a>
+            </div>
+
+            <div class="search-bar">
+                <form method="post" style="display: flex; align-items: center; gap: 8px; width: 100%;">
+                    {% csrf_token %}
+                    <input type="hidden" name="category" value="{{ current_category }}">
+                    <div class="search-input-wrapper">
+                        <input type="text" name="q" class="search-input" placeholder="Search menu items..." value="{{ q|default_if_none:'' }}" id="searchInput"> {% if q %}
+                        <button type="submit" name="q" value="" class="clear-btn" title="Clear Search">×</button> {% endif %}
+                    </div>
+                    <button type="submit" class="search-btn">Search</button>
+                </form>
+
+
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in menu_items %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.category }}</td>
+                        <td>Rs. {{ item.price }}</td>
+                        <td>
+                            <form method="post" action="{% url 'toggle_availability' item.id %}?user=admin">
+                                {% csrf_token %}
+                                <button type="submit" style="height: 40px; width: 100px; color: #fff; font-size: 14px;border-radius: 4px; border: none; outline: none; cursor: pointer; {% if item.delete_status == 1 %} background-color: green; {% else %} background-color: red; {% endif %}">
+                                    {% if item.delete_status == 1 %}
+                                    <span>Available</span>
+                                    {% else %}
+                                        <span>Out of Stock</span>
+                                    {% endif %}
+                                </button>
+                            </form>
+                        </td>
+                        <td>
+                            <!-- Example edit button (place in each row of menu items list) -->
+                            <button class="btn btn-outline" data-id="{{ item.id }}" data-name="{{ item.name }}" data-category="{{ item.category }}" data-price="{{ item.price }}" data-status="{{ item.delete_status }}">Edit
+                            </button>
+
+                            <form method="POST" action="{% url 'delete_menu_item' item.id %}" onsubmit="return confirm('Are you sure you want to delete this item?');" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4">No items in this category.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% elif page == "orders" %}
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Table Orders</div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Recent Orders</div>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Table</th>
+                            <th>Amount</th>
+                            <th style="text-indent: 15px;">Status</th>
+                            <th>Time</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                        <tr>
+                            <td>{{ order.id }}</td>
+                            <td>Table {{ order.table_number }}</td>
+                            <td>{{ order.subtotal }}</td>
+                            <td>
+                                <div class="order-status {% if order.status == 'Accept' %}status-inactive{% elif order.status == 'Ready' %}status-pending{% elif order.status == 'Delivered' %}status-active{% endif %}">
+                                    {{ order.status }}
+                                </div>
+                            </td>
+                            <td>{{ order.created_at|date:"M d, h:i A" }}</td>
+                            <td>
+                                <div class="order-entry">
+                                    <button class="btn view-btn" onclick="openModal({{ order.id }})">View</button>
+                                </div>
+
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+
+        {% elif page == "paymentdtls" %}
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Table Orders</div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Recent Orders</div>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Bill Number</th>
+                            <th>Table</th>
+                            <th>Payment Method</th>
+                            <th>Total Orders</th>
+                            <th>Payment Time</th>
+                            <th>Amount</th>
+                            <th>Bill View</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for payment in payments %}
+                        <tr {% if payment.notified %} style="background-color: #f0f0f0fa;" {% endif %}>
+                            <td>{{ payment.bill_number }}</td>
+                            <td>{{ payment.table_number }}</td>
+                            <td>
+                                {% if payment.payment_method == 1 %} Cash {% else %} Online {% endif %}
+                            </td>
+                            <td>{{ payment.order.items.count }}</td>
+                            <td>{{ payment.created_at|date:"M d, h:i A" }}</td>
+                            <td>{{ payment.total }}</td>
+                            <td>
+                                <a href="{% url 'admin_bill' payment.id %}">
+                                    <button class="btn view-btn">View</button>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+
+        </div>
+
+        {% elif page == "staff" %}
+<div class="card">
+    <div class="card-header">
+        <div class="card-title">Employee Management</div>
+        <div class="card-actions">
+<a href="{% url 'add_employee' %}">
+    <button class="btn btn-primary">Add Employee</button>
+</a>
+
+        </div>
+    </div>
+
+    <!-- Tabs -->
+<div class="tabs">
+    <a href="{% url 'admin_dashboard' %}?page=staff&staff=all"
+       class="tab {% if current_staff == 'all' %}active{% endif %}" style="text-decoration: none; color:black">
+       All
+    </a>
+    <a href="{% url 'admin_dashboard' %}?page=staff&staff=Dining"
+       class="tab {% if current_staff == 'Dining' %}active{% endif %}" style="text-decoration: none; color:black">
+       Dining
+    </a>
+    <a href="{% url 'admin_dashboard' %}?page=staff&staff=Kitchen"
+       class="tab {% if current_staff == 'Kitchen' %}active{% endif %}" style="text-decoration: none; color:black">
+       Kitchen
+    </a>
+    <a href="{% url 'admin_dashboard' %}?page=staff&staff=Full-Time"
+       class="tab {% if current_staff == 'Full-Time' %}active{% endif %}" style="text-decoration: none; color:black">
+       Full-Time
+    </a>
+    <a href="{% url 'admin_dashboard' %}?page=staff&staff=Part-Time"
+       class="tab {% if current_staff == 'Part-Time' %}active{% endif %}" style="text-decoration: none; color:black">
+       Part-Time
+    </a>
+    <a href="{% url 'admin_dashboard' %}?page=staff&staff=Removed"
+       class="tab {% if current_staff == 'Removed' %}active{% endif %}" style="text-decoration: none; color:black">
+       Removed
+    </a>
+</div>
+
+
+    <!-- Search -->
+    <div class="search-bar">
+        <form method="post" style="display: flex; align-items: center; gap: 8px; width: 100%;">
+            {% csrf_token %}
+            <input type="hidden" name="staff" value="{{ current_staff }}">
+            <div class="search-input-wrapper">
+                <input type="text" name="q" class="search-input" placeholder="Search employees..."
+                       value="{{ q|default_if_none:'' }}" id="searchInput">
+                {% if q %}
+                    <button type="submit" name="q" value="" class="clear-btn" title="Clear Search">×</button>
+                {% endif %}
+            </div>
+            <button type="submit" class="search-btn">Search</button>
+        </form>
+    </div>
+
+    <!-- Employee Grid -->
+    <div class="container" style="display: flex; flex-wrap: wrap; gap: 20px; padding: 20px;">
+        {% for employee in employees %}
+        <div class="card" style="width: 250px;">
+            {% if employee.emp_image %}
+                <img src="{{ employee.emp_image.url }}" alt="{{ employee.name }}" style="width:100%; height:180px; object-fit:cover;">
+            {% else %}
+                <img src="https://via.placeholder.com/250x180.png?text=No+Image" alt="No Image">
+            {% endif %}
+            <div class="card-body" style="padding: 10px;">
+                <h3>{{ employee.name }}</h3>
+                <p class="staff-id">ID: EMP{{ employee.id|stringformat:"03d" }}</p>
+                <p>Contact: {{employee.phno}}</p>
+                <p>Role: {{ employee.staff }}</p>
+                <p>Type: {{ employee.employment_type }}</p>
+                <p>Status: {% if employee.is_active %}Active{% else %}Inactive{% endif %}</p>
+                <a href="{% url 'edit_employee' employee.id %}"><button class="btn btn-primary" data-id="{{ employee.id }}">Edit</button></a>
+                <form method="POST" action="{% url 'toggle_employee_status' employee.id %}" style="display:inline;">
+    {% csrf_token %}
+    {% if employee.is_active %}
+        <button type="submit" class="btn btn-danger">Remove</button>
+    {% else %}
+        <button type="submit" class="btn btn-success">Restore</button>
+    {% endif %}
+</form>
+            </div>
+        </div>
+        {% empty %}
+        <p>No employees found in this category.</p>
+        {% endfor %}
+    </div>
+</div>
+
+
+        {% elif page == "feedback" %}
+ <div class="card">
+    <div class="card-header">
+        <div class="card-title">Customer Feedback</div>
+    </div>
+    <div class="card-body">
+        {% if payments_today %}
+            {% for fb in payments_today %}
+<div class="feedback-card">
+    <div class="feedback-header">
+        <h3>Table {{ fb.table_number }} - Bill {{ fb.bill_number }}</h3>
+        <form method="post" action="{% url 'delete_feedback' fb.id %}" class="delete-form">
+            {% csrf_token %}
+            <button type="submit" class="delete-btn">
+                <i class="fa fa-trash"></i>
+            </button>
+        </form>
+    </div>
+    <p class="date">Date: {{ fb.bill_date }} {{ fb.bill_time }}</p>
+
+    <!-- Star Rating -->
+    <div class="star-rating">
+        {% for i in stars %}
+            {% if i <= fb.rating %}
+                <i class="fa fa-star"></i>
+            {% else %}
+                <i class="fa fa-star empty"></i>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <p class="feedback-text">"{{ fb.feedback }}"</p>
+</div>
+
+            {% endfor %}
+        {% else %}
+            <p>No feedback available.</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- FontAwesome for stars -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+<style>
+.feedback-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.delete-form {
+    margin: 0;
+}
+
+.delete-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #e74c3c;
+    font-size: 18px;
+    transition: color 0.2s, transform 0.2s;
+}
+
+.delete-btn:hover {
+    color: #c0392b;
+    transform: scale(1.1);
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.feedback-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.feedback-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+}
+
+.feedback-card h3 {
+    margin: 0 0 6px;
+    font-size: 18px;
+    color: #2c3e50;
+}
+
+.feedback-card .date {
+    font-size: 14px;
+    color: #777;
+    margin: 0 0 8px;
+}
+
+.star-rating {
+    display: flex;
+    gap: 4px;
+    font-size: 20px;
+}
+.star-rating i {
+    background: linear-gradient(90deg, #f39c12 0%, #f1c40f 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.star-rating i.empty {
+    color: #ddd;
+    -webkit-text-fill-color: #ddd;
+}
+
+.feedback-text {
+    font-size: 16px;
+    color: #555;
+    margin-top: 8px;
+}
+</style>
+
+
+        {% elif page == "settings" %}
+
+        <div class="dashboard-tabs">
+            <a href="{% url 'admin_dashboard' %}?page=settings&set_sub=table" class="{% if set_sub == 'table' %}active{% endif %}"><button class="tab-link">Login Management</button></a>
+            <a href="{% url 'admin_dashboard' %}?page=settings&set_sub=group" class="{% if set_sub == 'group' %}active{% endif %}"><button class="tab-link">Groups</button></a>
+            <a href="{% url 'admin_dashboard' %}?page=settings&set_sub=charge" class="{% if set_sub == 'charge' %}active{% endif %}"><button class="tab-link">Charges</button></a>
+
+        </div>
+
+        {% if set_sub == "group" %} 
+        
+        <div class="card">
+    <div class="card-header">
+        <div class="card-title">Group Management</div>
+        <div class="card-actions">
+            <a href="{% url 'add_group' %}">
+                <button class="btn btn-success">Add New Group</button>
+            </a>
+        </div>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Group Name</th>
+                <th>User Count</th>
+                <th>Members</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for group in groups %}
+            <tr>
+                <td>{{ group.name }}</td>
+                <td>{{ group.user_count }}</td>
+                <td>
+                    {% if group.users %}
+                        <ul style="padding-left:16px; margin:0;">
+                            {% for u in group.users %}
+                                <li>{{ u.username }} 
+                                    {% if u.last_login %}
+                                        <span style="font-size:12px; color:#777;">
+                                            (Last login: {{ u.last_login|timesince }} ago)
+                                        </span>
+                                    {% else %}
+                                        <span style="font-size:12px; color:#777;">(Never Logged In)</span>
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <em>No users in this group</em>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'manage_group' group.id %}">
+                        <button class="btn btn-info">Manage</button>
+                    </a>
+                    <a href="{% url 'edit_group' group.id %}">
+                        <button class="btn btn-primary">Edit</button>
+                    </a>
+                    <a href="{% url 'delete_group' group.id %}" 
+                    onclick="return confirm('Are you sure you want to delete group {{ group.name }}?');">
+                        <button class="btn btn-danger">Delete</button>
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">No groups found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+        
+        {% elif set_sub == "charge" %}
+<div class="premium-card-minimal">
+    <!-- Header -->
+    <div class="card-header">
+        <h2 class="fw-bold">Charges Management</h2>
+        <p class="text-muted">Set tax and service charges for all bills</p>
+    </div>
+
+    <!-- Body -->
+    <div class="card-body">
+        <form method="post" class="charges-form">
+            {% csrf_token %}
+            <input type="hidden" name="update_charges" value="1">
+
+            <div class="charge-field">
+                <label for="tax" class="form-label">Tax (%)</label>
+                <input type="number" step="0.01" name="tax" id="tax" value="{{ charges.tax|default:0 }}" class="form-control premium-input">
+            </div>
+
+            <div class="charge-field">
+                <label for="service_charge" class="form-label">Service Charge (%)</label>
+                <input type="number" step="0.01" name="service_charge" id="service_charge" value="{{ charges.service_charge|default:0 }}" class="form-control premium-input">
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-save">Save</button>
+                <a href="{% url 'admin_dashboard' %}" class="btn btn-back">Back to Dashboard</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+/* Card */
+.premium-card-minimal {
+    background: #fff;
+    border-radius: 20px;
+
+    margin: 30px auto;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+}
+.premium-card-minimal:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 40px rgba(0,0,0,0.12);
+}
+
+/* Header */
+.card-header {
+    padding: 30px 28px;
+    border-bottom: 1px solid #e5e5e5;
+}
+.card-header h2 {
+    margin-bottom: 6px;
+    font-size: 24px;
+    color: #333;
+}
+.card-header p {
+    font-size: 14px;
+    color: #777;
+}
+
+/* Body & Form */
+.card-body {
+    padding: 32px 28px;
+}
+.charge-field {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 24px;
+}
+.charge-field label {
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #444;
+}
+.premium-input {
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid #d1d5db;
+    font-size: 16px;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+.premium-input:focus {
+    border-color: #999;
+    box-shadow: 0 0 0 0.15rem rgba(0,0,0,0.08);
+    outline: none;
+}
+
+/* Buttons */
+.form-actions {
+    display: flex;
+    gap: 16px;
+    margin-top: 12px;
+}
+.btn {
+    padding: 12px 28px;
+    border-radius: 50px;
+    font-weight: 500;
+    font-size: 15px;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+    border: none;
+    transition: all 0.3s ease;
+}
+.btn-save {
+    background: #333;
+    color: #fff;
+}
+.btn-save:hover {
+    background: #555;
+    transform: scale(1.03);
+}
+.btn-back {
+    background: #f5f5f5;
+    color: #555;
+}
+.btn-back:hover {
+    background: #e5e5e5;
+    transform: scale(1.03);
+}
+</style>
+
+
+
+        {% else %}
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Login Management</div>
+                <div class="card-actions">
+                    <a href="{% url 'add_table_user' %}"><button class="btn btn-success" >Add New Table</button></a>
+                    <a href="{% url 'force_logout_all_tables' %}"><button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to logout ALL tables?');">
+    Force Logout All Tables</button></a>
+                </div>
+            </div>
+
+
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>User Name</th>
+                        <th>Status</th>
+                        <th>Date Joined</th>
+                        <th>Last Login</th>
+                        <th>Actions</th>
+                        <th>Logout</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for table in tables %}
+                    <tr>
+                        <td>{{ table.username }}</td>
+                        <td>{% if table.status == "active" %}
+                            <span style="color: green; font-weight: bold;">🟢 Active</span> {% elif table.status == "inactive" %}
+                            <span style="color: red; font-weight: bold;">🔴 Inactive</span> {% else %}
+                            <span style="color: gray; font-weight: bold;">⚪ Never Logged In</span> {% endif %}</td>
+                        <td>{{ table.date_joined|date:"Y-m-d H:i" }}</td>
+                        <td>{% if table.last_login %}{{ table.last_login|timesince }} ago{% else %}Never Logged In{% endif %}</td>
+                        <td><a href="{% url 'reset_table_password' table.id %}"><button class ="btn btn-primary">Reset</button></a>
+                            <a href="{% url 'delete_table_user' table.id %}" onclick="return confirm('Are you sure you want to delete {{ table.username }}?');"><button class="btn btn-danger">Delete</button></a>
+                        </td>
+                        <td>
+                            <a href="{% url 'force_logout_user' table.id %}" onclick="return confirm('Are you sure you want to logout {{ table.username }}?');">
+                                <button class="btn btn-danger">Logout</button></a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4">No table users found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+
+
+        {% endif %} {% else %}
+<div class="dashboard">
+
+    <!-- Tabs -->
+    <div class="dashboard-tabs">
+        <button class="tab-link" onclick="showTab('overviewTab', event)">Overview</button>
+        <button class="tab-link" onclick="showTab('ordersTab', event)">Orders</button>
+        <button class="tab-link" onclick="showTab('paymentsTab', event)">Payments</button>
+        <button class="tab-link" onclick="showTab('tablesTab', event)">Tables</button>
+    </div>
+
+    <!-- Tab Contents -->
+
+    <!-- Overview Tab -->
+    <div id="overviewTab" class="tab-content">
+        <div class="stats-cards">
+            <div class="stat-card">
+                <div class="stat-icon"><i data-feather="trending-up"></i></div>
+                <div class="stat-title">Total Revenue Today</div>
+                <div class="stat-value" data-target="{{ revenue_today|floatformat:2 }}">₹ {{ revenue_today|floatformat:2 }}</div>
+
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i data-feather="bar-chart-2"></i></div>
+                <div class="stat-title">Average Order Value</div>
+                <div class="stat-value">₹ {{ avg_order_value|floatformat:2 }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i data-feather="shopping-cart"></i></div>
+                <div class="stat-title">Most Ordered Item</div>
+                <div class="stat-value">{{ most_ordered_item }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i data-feather="users"></i></div>
+                <div class="stat-title">Total Customers Today</div>
+                <div class="stat-value">{{ customers_today }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Orders Tab -->
+    <div id="ordersTab" class="tab-content" style="display:none;">
+        <div class="stats-cards">
+            <div class="stat-card">
+                <div class="stat-icon"><i data-feather="file-text"></i></div>
+                <div class="stat-title">Total Orders</div>
+                <div class="stat-value">{{ total_orders }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i data-feather="check-circle"></i></div>
+                <div class="stat-title">Accepted Orders</div>
+                <div class="stat-value">{{ accepted_count }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i data-feather="clock"></i></div>
+                <div class="stat-title">Ready Orders</div>
+                <div class="stat-value">{{ ready_count }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i data-feather="truck"></i></div>
+                <div class="stat-title">Delivered Orders</div>
+                <div class="stat-value">{{ delivered_count }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i data-feather="alert-circle"></i></div>
+                <div class="stat-title">Pending Orders</div>
+                <div class="stat-value">{{ pending_orders }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payments Tab -->
+    <div id="paymentsTab" class="tab-content" style="display:none;">
+        <div class="stats-cards">
+            <div class="stat-card">
+                <div class="stat-icon"><i data-feather="dollar-sign"></i></div>
+                <div class="stat-title">Payments - Cash</div>
+                <div class="stat-value">{{ cash_payments }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i data-feather="credit-card"></i></div>
+                <div class="stat-title">Payments - Online</div>
+                <div class="stat-value">{{ online_payments }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i data-feather="clock"></i></div>
+                <div class="stat-title">Pending Payments</div>
+                <div class="stat-value">{{ pending_payments }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tables Tab -->
+    <div id="tablesTab" class="tab-content" style="display:none;">
+        <div class="stats-cards">
+            <div class="stat-card">
+                <div class="stat-icon"><i data-feather="user-check"></i></div>
+                <div class="stat-title">Active Tables</div>
+                <div class="stat-value">{{ active_tables }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i data-feather="user-x"></i></div>
+                <div class="stat-title">Inactive Tables</div>
+                <div class="stat-value">{{ inactive_tables }}</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<style>
+.dashboard {
+    margin: auto;
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f7fa;
+}
+
+/* Tabs */
+.dashboard-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.tab-link {
+    padding: 12px 22px;
+    border: none;
+    background: #e0e4eb;
+    cursor: pointer;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    color: #333;
+}
+
+.tab-link:hover {
+    background: #d0d4db;
+}
+
+.tab-link.active {
+    background: #0073e6;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(0, 115, 230, 0.4);
+}
+
+/* Stat Cards Grid */
+.stats-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+/* Individual Stat Card */
+.stat-card {
+    background: linear-gradient(145deg, #ffffff, #f0f4f8);
+    border-radius: 14px;
+    padding: 22px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(0,115,230,0.05) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.stat-card:hover::after {
+    opacity: 1;
+}
+
+.stat-card:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+}
+
+/* Icon */
+.stat-icon i {
+    width: 42px;
+    height: 42px;
+    stroke-width: 2.5;
+    color: #0073e6;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.stat-card:hover .stat-icon i {
+    transform: rotate(10deg) scale(1.1);
+    color: #005bb5;
+}
+
+/* Titles and Values */
+.stat-title {
+    font-size: 14px;
+    color: #555;
+}
+
+.stat-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: #111;
+    margin-left: auto;
+}
+
+</style>
+<script src="https://unpkg.com/feather-icons"></script>
+<script>
+feather.replace();
+
+function showTab(tabId, event = null) {
+    const tabs = document.getElementsByClassName('tab-content');
+    Array.from(tabs).forEach(t => t.style.display = 'none');
+
+    const links = document.getElementsByClassName('tab-link');
+    Array.from(links).forEach(l => l.classList.remove('active'));
+
+    document.getElementById(tabId).style.display = 'grid';
+    if (event) event.currentTarget.classList.add('active');
+
+    localStorage.setItem('activeTabId', tabId);
+}
+
+window.onload = function() {
+    const savedTab = localStorage.getItem('activeTabId') || 'overviewTab';
+    showTab(savedTab);
+}
+
+function animateCounters(tabId) {
+    const tab = document.getElementById(tabId);
+    const counters = tab.querySelectorAll('.stat-value[data-target]');
+
+    counters.forEach(counter => {
+        const target = parseFloat(counter.getAttribute('data-target').replace(/[^0-9.-]+/g,""));
+        if (isNaN(target)) return; // Skip non-numeric (like most_ordered_item)
+        
+        let count = 0;
+        const duration = 1000; // 1 second
+        const stepTime = 20; // update every 20ms
+        const increment = target / (duration / stepTime);
+
+        const updater = setInterval(() => {
+            count += increment;
+            if (count >= target) {
+                counter.innerText = '₹ ' + target.toFixed(2);
+                clearInterval(updater);
+            } else {
+                counter.innerText = '₹ ' + count.toFixed(2);
+            }
+        }, stepTime);
+    });
+}
+
+// Trigger counter animation on tab change
+function showTab(tabId, event = null) {
+    const tabs = document.getElementsByClassName('tab-content');
+    Array.from(tabs).forEach(t => t.style.display = 'none');
+
+    const links = document.getElementsByClassName('tab-link');
+    Array.from(links).forEach(l => l.classList.remove('active'));
+
+    document.getElementById(tabId).style.display = 'grid';
+    if (event) event.currentTarget.classList.add('active');
+
+    localStorage.setItem('activeTabId', tabId);
+
+    // Animate counters for the active tab
+    animateCounters(tabId);
+}
+
+window.onload = function() {
+    const savedTab = localStorage.getItem('activeTabId') || 'overviewTab';
+    showTab(savedTab);
+}
+
+</script>
+
+        {% endif %} {% endwith %}
+
+        <!-- View Orders Modal -->
+        {% for order in orders %}
+        <div class="modal view-modal" id="modal-{{ order.id }}">
+            <div class="modal-content" onclick="event.stopPropagation()">
+                <div class="modal-header">
+                    <div class="top-info">
+                        <div>🍽 Table {{ order.table_number }}</div>
+                        <div>📅 {{ order.created_at|date:"d/m/y h:i A" }}</div>
+                    </div>
+
+                    <button class="close" onclick="closeModal({{ order.id }} )">&times;</button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="bill-section">
+                        <div class="bill-header">
+                            <div class="col">Item</div>
+                            <div class="col">Qty</div>
+                            <div class="col">Price</div>
+                        </div>
+                        <div class="item-list">
+                            {% for item in order.items.all %}
+                            <div class="row">
+                                <div class="col">{{ item.item.name }}</div>
+                                <div class="col">{{ item.quantity }}</div>
+                                <div class="col">₹{{ item.total }}</div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="total">Total: ₹{{ order.subtotal }}</div>
+                    </div><br>
+
+                    <div class="actions">
+                        <div class="button status">✅ Status: {{ order.status }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+
+
+
+
+        <!-- Add Menu Item Modal -->
+        <div class="modal" id="addMenuItemModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title">Add New Menu Item</div>
+                    <button class="close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'add_menu_item' %}" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label class="form-label">Item Name</label>
+                            <input type="text" name="name" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Category</label>
+                            <select name="category" class="form-control" required>
+                            <option value="">Select Category</option>
+                            <option value="Bites">Bites</option>
+                            <option value="Brews">Brews</option>
+                        </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Price</label>
+                            <input type="number" name="price" step="0.01" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Image</label>
+                            <input type="file" name="image" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Availability</label>
+                            <div>
+                                <label><input type="radio" name="delete_status" value="1" checked> Available</label>
+                                <label><input type="radio" name="delete_status" value="0"> Out of Stock</label>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-outline close">Cancel</button>
+                            <button class="btn btn-primary" type="submit">Save Item</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal" id="editMenuItemModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title">Edit Menu Item</div>
+                    <button class="close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'edit_menu_item' %}" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="hidden" name="item_id" id="editItemId">
+                        <div class="form-group">
+                            <label class="form-label">Item Name</label>
+                            <input type="text" name="name" id="editName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Category</label>
+                            <select name="category" id="editCategory" class="form-control" required>
+                        <option value="Bites">Bites</option>
+                        <option value="Brews">Brews</option>
+                    </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Price</label>
+                            <input type="number" name="price" id="editPrice" step="0.01" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Image (Upload only if you want to change)</label>
+                            <input type="file" name="image" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Availability</label>
+                            <div>
+                                <label><input type="radio" name="delete_status" value="1" id="editAvailable"> Available</label>
+                                <label><input type="radio" name="delete_status" value="0" id="editOutOfStock"> Out of Stock</label>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-outline close">Cancel</button>
+                            <button class="btn btn-primary" type="submit">Update Item</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Toggle sidebar
+                const toggleSidebarBtn = document.querySelector('.toggle-sidebar');
+                const sidebar = document.querySelector('.sidebar');
+
+                toggleSidebarBtn.addEventListener('click', function() {
+                    sidebar.classList.toggle('collapsed');
+                });
+
+                // Navigation menu
+                const navItems = document.querySelectorAll('.nav-item');
+                navItems.forEach(item => {
+                    item.addEventListener('click', function() {
+                        navItems.forEach(i => i.classList.remove('active'));
+                        this.classList.add('active');
+                        // In a real app, you would load the appropriate content here
+                    });
+                });
+
+                // Tabs
+                const tabs = document.querySelectorAll('.tab');
+                tabs.forEach(tab => {
+                    tab.addEventListener('click', function() {
+                        tabs.forEach(t => t.classList.remove('active'));
+                        this.classList.add('active');
+                        // In a real app, you would switch tab content here
+                    });
+                });
+
+                // Modal
+                const addMenuItemBtn = document.getElementById('addMenuItemBtn');
+                const addMenuItemModal = document.getElementById('addMenuItemModal');
+                const viewModal = document.getElementById('modal-{{ order.id }}');
+                const closeModalBtns = document.querySelectorAll('.modal .close, .modal .btn-outline.close');
+
+                addMenuItemBtn.addEventListener('click', function() {
+                    addMenuItemModal.classList.add('show');
+                });
+
+                closeModalBtns.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        addMenuItemModal.classList.remove('show');
+                    });
+                });
+
+                // Close modal when clicking outside
+                window.addEventListener('click', function(e) {
+                    const modals = document.querySelectorAll('.view-modal.show');
+                    modals.forEach(modal => {
+                        if (e.target === modal) {
+                            modal.classList.remove('show');
+                        }
+                    });
+                    if (e.target === addMenuItemModal) {
+                        addMenuItemModal.classList.remove('show');
+                    }
+                    if (e.target === editMenuItemModal) {
+                        editMenuItemModal.classList.remove('show');
+                    }
+                });
+
+                // Form submission
+                const menuItemForm = document.getElementById('menuItemForm');
+                menuItemForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    // In a real app, you would handle form submission here
+                    alert('Menu item added successfully!');
+                    addMenuItemModal.classList.remove('show');
+                    menuItemForm.reset();
+                });
+
+                // Chart would be initialized here in a real app
+                // Example: const ctx = document.getElementById('salesChart').getContext('2d');
+                // new Chart(ctx, { ... });
+            });
+
+            // setTimeout(() => {
+            //     const note = document.querySelector('.notification');
+            //     if (note) note.style.display = 'none';
+            // }, 3000);
+
+            const editMenuItemModal = document.getElementById('editMenuItemModal');
+            const editBtns = document.querySelectorAll('.btn-outline');
+
+            editBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.getElementById('editItemId').value = btn.dataset.id;
+                    document.getElementById('editName').value = btn.dataset.name;
+                    document.getElementById('editCategory').value = btn.dataset.category;
+                    document.getElementById('editPrice').value = btn.dataset.price;
+
+                    if (btn.dataset.status === "1") {
+                        document.getElementById('editAvailable').checked = true;
+                    } else {
+                        document.getElementById('editOutOfStock').checked = true;
+                    }
+
+                    editMenuItemModal.classList.add('show');
+                });
+            });
+
+            // Close modal
+            const editCloseBtns = document.querySelectorAll('#editMenuItemModal .close, #editMenuItemModal .btn-outline.close');
+            editCloseBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    editMenuItemModal.classList.remove('show');
+                });
+            });
+
+            // Auto refresh only if modals are not shown
+            // setInterval(() => {
+            //     const addModalVisible = document.getElementById('addMenuItemModal')?.classList.contains('show');
+            //     const editModalVisible = document.getElementById('editMenuItemModal')?.classList.contains('show');
+
+            // Check if any modal with class 'modal' and class 'show' exists
+            //     const viewModalVisible = Array.from(document.querySelectorAll('.modal.show')).length > 0;
+
+            //     if (!addModalVisible && !editModalVisible && !viewModalVisible) {
+            //         location.reload();
+            //     }
+            // }, 5000); // Check every 10 seconds
+
+
+
+            // Show and hide views
+            function openModal(id) {
+                document.getElementById(`modal-${id}`).classList.add('show');
+            }
+
+            function closeModal(id) {
+                document.getElementById(`modal-${id}`).classList.remove('show');
+            }
+
+
+
+
+            // // Close button
+            // document.querySelectorAll('#viewOrdersModal .close').forEach(btn => {
+            //     btn.addEventListener('click', () => {
+            //         document.getElementById('viewOrdersModal').classList.remove('show');
+            //     });
+            // });
+        </script>
+
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+            function checkPaymentStatus() {
+                $.ajax({
+                    url: '{% url "check_payment_status" %}',
+                    type: 'GET',
+                    success: function(data) {
+                        let messagesDiv = $('#notification-messages');
+                        let icon = $('#notification-icon');
+                        let countSpan = $('#notification-count');
+
+                        // Clear previous messages
+                        messagesDiv.empty();
+
+                        let count = data.payments.length;
+
+                        if (count > 0) {
+                            // Add messages
+                            data.payments.forEach(function(payment) {
+                                let message = "";
+                                if (payment.method === 'online') {
+                                    message = "Table " + payment.table_number + " paid online.  Amount: ₹" + payment.amount;
+                                } else if (payment.method === 'cash') {
+                                    message = "Table " + payment.table_number + " will pay cash.  Amount: ₹" + payment.amount;
+                                }
+
+                                // Add button
+                                let okButton = "<button class='ok-payment-btn' data-id='" + payment.id + "' style='margin-left:10px; color: white; background-color: green; width: 50px; height: 30px; border: none; border-radius: 5px; text-weight: bold;'>OK</button>";
+                                let button = "<button class='view-payment-btn' data-id='" + payment.id + "' style='margin-left:10px; color: white; background-color: blue; width: 50px; height: 30px; border: none; border-radius: 5px; text-weight: bold;'>View</button>";
+
+                                messagesDiv.append("<h4>" + message + okButton + button + "</h4><br>");
+                            });
+
+                            $(document).on('click', '.view-payment-btn', function(event) {
+                                event.stopPropagation();
+
+                                let paymentId = $(this).data('id');
+                                window.location.href = "{% url 'admin_dashboard' %}?page=paymentdtls&paymentid=" + paymentId + "/";
+                            });
+
+                            $(document).on('click', '.ok-payment-btn', function(event) {
+                                event.stopPropagation();
+
+                                let paymentId = $(this).data('id');
+                                window.location.href = "/ok_in_admin/" + paymentId + "/";
+                            });
+
+
+                            // Show count badge
+                            countSpan.text(count);
+                            countSpan.show();
+
+                            // Highlight icon
+                            icon.css('color', 'red');
+                        }
+                    }
+                });
+            }
+
+            // Poll every 5 seconds
+            setInterval(checkPaymentStatus, 3000);
+
+            // Toggle message visibility when clicking the icon
+            $('#notification-icon').on('click', function(event) {
+                event.stopPropagation(); // Prevent click from bubbling up to document
+                $('#notification-messages').toggle();
+
+                // Reset icon color and hide count after viewing
+                $(this).css('color', 'black');
+                $('#notification-count').hide();
+            });
+
+            // Hide notification messages when clicking anywhere else on the page
+            $(document).on('click', function() {
+                $('#notification-messages').hide();
+            });
+        </script>
+
+
+        <script>
+            function showTab(tabId, event = null) {
+                // Hide all tab contents
+                var tabs = document.getElementsByClassName('tab-content');
+                for (var i = 0; i < tabs.length; i++) {
+                    tabs[i].style.display = "none";
+                }
+
+                // Remove active class from all buttons
+                var links = document.getElementsByClassName('tab-link');
+                for (var i = 0; i < links.length; i++) {
+                    links[i].classList.remove('active');
+                }
+
+                // Show selected tab and make its button active
+                document.getElementById(tabId).style.display = "block";
+                if (event) {
+                    event.currentTarget.classList.add('active');
+                } else {
+                    // If no event passed, find matching button
+                    var buttons = document.getElementsByClassName('tab-link');
+                    for (var i = 0; i < buttons.length; i++) {
+                        if (buttons[i].getAttribute('onclick').includes(tabId)) {
+                            buttons[i].classList.add('active');
+                            break;
+                        }
+                    }
+                }
+
+                // Store the active tab ID
+                localStorage.setItem('activeTabId', tabId);
+            }
+
+            // On page load, restore the last active tab
+            window.onload = function() {
+                const savedTab = localStorage.getItem('activeTabId') || 'overviewTab';
+                showTab(savedTab);
+            };
+        </script>
+
+
+
+</body>
+
+</html>

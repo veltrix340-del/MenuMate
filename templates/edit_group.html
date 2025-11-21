@@ -1,0 +1,106 @@
+<div class="premium-card-spacious">
+    <!-- Header -->
+    <div class="card-header">
+        <h2 class="fw-bold text-gradient">
+            <i class="fa-solid fa-pen-to-square me-2"></i> Edit Group
+        </h2>
+        <small class="text-muted">Update the group details below</small>
+    </div>
+
+    <!-- Body -->
+    <div class="card-body p-5">
+        <form method="post" class="edit-group-form d-flex flex-column gap-5">
+            {% csrf_token %}
+            <div class="form-group">
+                <label class="form-label fw-semibold">Group Name:</label>
+                <input type="text" name="name" class="form-control premium-input-spacious" value="{{ group.name }}" required>
+            </div>
+
+            <div class="d-flex gap-4 mt-4">
+                <button type="submit" class="btn btn-gradient-save-spacious">
+                    <i class="fa-solid fa-check me-2"></i> Update
+                </button>
+                <a href="{% url 'admin_dashboard' %}?page=settings&set_sub=group" class="btn btn-gradient-cancel-spacious">
+                    <i class="fa-solid fa-xmark me-2"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- FontAwesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+<style>
+/* Reuse spacious premium card styles from Add New Group */
+.premium-card-spacious {
+    border-radius: 28px;
+    background: #fdfdfd;
+    min-height: 400px;
+    box-shadow: 0 22px 58px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+}
+.premium-card-spacious:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 30px 72px rgba(0,0,0,0.22);
+}
+
+/* Header */
+.card-header {
+    background: linear-gradient(135deg,#667eea,#764ba2);
+    color: #fff;
+    padding: 36px 32px;
+    border-radius: 28px 28px 0 0;
+}
+.text-gradient {
+    background: linear-gradient(90deg,#fbb034,#ffdd00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Form */
+.premium-input-spacious {
+    padding: 18px 20px;
+    border-radius: 16px;
+    border: 1px solid #d1d5db;
+    font-size: 16px;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+.premium-input-spacious:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.25rem rgba(102,126,234,0.25);
+    outline: none;
+}
+
+/* Buttons */
+.btn-gradient-save-spacious {
+    background: linear-gradient(135deg,#667eea,#764ba2);
+    color: #fff;
+    border: none;
+    padding: 16px 32px;
+    border-radius: 60px;
+    font-weight: 500;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+.btn-gradient-save-spacious:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 30px rgba(102,126,234,0.35);
+}
+
+.btn-gradient-cancel-spacious {
+    background: #e0e0e0;
+    color: #374151;
+    border: none;
+    padding: 16px 32px;
+    border-radius: 60px;
+    font-weight: 500;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+.btn-gradient-cancel-spacious:hover {
+    background: #c7c7c7;
+    transform: scale(1.05);
+}
+</style>

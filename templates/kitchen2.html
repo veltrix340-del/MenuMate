@@ -1,0 +1,231 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/kitchen.css' %}">
+    <title>Kitchen Dashboard</title>
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <div class="nav">
+        <h2>Cassa Cassandra - Kitchen</h2>
+    </div>
+
+    {% if messages %}
+    {% for message in messages %}
+        <div class="notification {{ message.tags }}">
+            <p>{{ message }}</p>
+        </div>
+    {% endfor %}
+    {% endif %}
+
+    <div class="whole-container">
+        <div class="container">
+            <div class="container-1">
+                <div class="box-1">
+                    <p>pending</p>
+                    <p style="color: #e74c3c; font-size: 25px; font-weight: bold;">{{ pending_count }}</p>
+                    <p>orders</p>
+                </div>
+                <div class="box-1">
+                    <p>preparing</p>
+                    <p style="color: #f39c12; font-size: 25px; font-weight: bold;">{{ preparing_count }}</p>
+                    <p>orders</p>
+                </div>
+                <div class="box-1">
+                    <p>completed</p>
+                    <p style="color: #27ae60; font-size: 25px; font-weight: bold;">{{ completed_count }}</p>
+                    <p>today</p>
+                </div>
+            </div>
+
+            <div class="container-2">
+                <h3>Orders</h3>
+                <div class="orders-container">
+                    {% for order in orders %}
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div class="order-table">Table {{ order.table_number }}</div>
+                            <div class="order-time">{{ order.created_at }}</div>
+                        </div>
+                        <div class="order-status {% if order.status == 'Accept' %}status-pending
+                                                 {% elif order.status == 'Ready' %}status-ready
+                                                 {% elif order.status == 'Delivered' %}status-delivered
+                                                 {% endif %}">{{ order.status }}
+                        </div>
+                        <div class="order-items">
+                            {% for item in order.items.all %}
+                                <div class="order-item">
+                                    <span>{{ item.item.name }}</span>
+                                    <span class="item-quantity">× {{ item.quantity }}</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <form method="post" class="status-form">
+                            {% csrf_token %}
+                            <input type="hidden" name="order_id" value="{{ order.id }}">
+                            <input type="hidden" name="action" value="progress">
+                            <button type="submit" class="{% if order.status == 'Accept' %}red-btn{% elif order.status == 'Ready' %}yellow-btn{% elif order.status == 'Delivered' %}green-btn{% endif %}">{{ order.status }}</button>
+                        </form>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="right-section">
+            <div class="total-edit-section">
+               
+                <div class="total-edit">
+                    <div >
+                        <button id="showItemsBtn" style="background-color: #2c3e50; width: 28.2vh; height: 5vh;  border-left: 1px wheat; color: #ffffff;">Show Total Items</button>
+                    </div>
+                    <div  id="editButton">
+                        <button id="showEditBtn" style="background-color: #2c3e50; width: 28.2vh; height: 5vh; border-right: 1px wheat; color: #ffffff;" >Show Edit Section</button>  
+                    </div>
+                </div>  
+
+                <!-- Total Items -->
+                <div class="total-edit-1 section active" id="itemSection">
+                    <h3>Total Items Needed</h3>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Total Qty</th>
+                                <th>Tables</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in kitchen_totals %}
+                            <tr>
+                                <td>{{ item.item_name }}</td>
+                                <td>{{ item.total_qty }}</td>
+                                <td>{{ item.tables }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="3">No active items.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Edit Section -->
+                <div class="total-edit-1 section" id="editSection">
+                    <h3>Edit Items</h3>
+                    <input type="text" class="search-input" placeholder="Search menu items...">
+                    <button type="submit" class="search-btn">Search</button>
+
+
+                    <table>
+                        <tr>
+                            <th>Id</th>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                        </tr>
+                        {% for item in menu_items %}
+                        <tr>
+                            <td>{{forloop.counter}}</td>
+                            <td>{{item.name}}</td>
+                            <td>{{item.category}}</td>
+                            <td>
+                                <form method="post" action="{% url 'toggle_availability' item.id %}?user=kitchen">
+                                    {% csrf_token %}
+                                    <button type="submit" style="height: 40px; width: 100px; color: #fff; font-size: 14px;border-radius: 4px; border: none; outline: none; cursor: pointer; {% if item.delete_status == 1 %} background-color: green; {% else %} background-color: red; {% endif %}">
+                                        {% if item.delete_status == 1 %}
+                                            <span>Available</span>
+                                        {% else %}
+                                            <span>Out of Stock</span>
+                                        {% endif %}
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="4">No items in this category</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.status-form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                const button = form.querySelector('button');
+                if (button.textContent.trim() === 'Delivered') {
+                    e.preventDefault();  // Stop immediate submission
+    
+                    // Wait 2 seconds and then submit remove request
+                    setTimeout(() => {
+                        const hiddenInput = document.createElement('input');
+                        hiddenInput.type = 'hidden';
+                        hiddenInput.name = 'action';
+                        hiddenInput.value = 'remove';
+                        form.appendChild(hiddenInput);
+                        form.submit();
+                    }, 500);
+                }
+            });
+        });
+    
+            // Tabs
+        document.addEventListener('DOMContentLoaded', function () {
+        const showItemsBtn = document.getElementById('showItemsBtn');
+        const showEditBtn = document.getElementById('showEditBtn');
+        const itemsSection = document.getElementById('itemSection');
+        const editSection = document.getElementById('editSection');
+    
+        // Load saved view from localStorage
+        const savedSection = localStorage.getItem('activeSection') || 'items';
+    
+        function showItems() {
+            itemsSection.classList.add('active');
+            editSection.classList.remove('active');
+            showItemsBtn.classList.add('active');
+            showEditBtn.classList.remove('active');
+            localStorage.setItem('activeSection', 'items');
+        }
+    
+        function showEdit() {
+            itemsSection.classList.remove('active');
+            editSection.classList.add('active');
+            showItemsBtn.classList.remove('active');
+            showEditBtn.classList.add('active');
+            localStorage.setItem('activeSection', 'edit');
+        }
+    
+        // Set initial view
+        if (savedSection === 'edit') {
+            showEdit();
+        } else {
+            showItems();
+        }
+    
+        // Event listeners
+        showItemsBtn.addEventListener('click', showItems);
+        showEditBtn.addEventListener('click', showEdit);
+    
+        // Auto-reload only when not in edit view
+        setInterval(() => {
+            const editIsActive = document.getElementById('editSection')?.classList.contains('active');
+            if (!editIsActive) {
+                location.reload();
+            }
+        }, 5000);
+    });
+    
+    
+        </script>
+</body>
+</html>

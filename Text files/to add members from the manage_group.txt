@@ -1,0 +1,142 @@
+Got it ✅ — right now the **Add New Member** in `manage_group.html` only lets you pick from existing users.
+If you want admins to **create a completely new user directly inside Manage Group**, we can extend it like this:
+
+---
+
+## 🔹 Updated `manage_group.html`
+
+```html
+<div class="card">
+    <div class="card-header">
+        <div class="card-title">Manage Group: {{ group.name }}</div>
+    </div>
+
+    <div class="card-body">
+        <!-- Members List -->
+        <h5>Members</h5>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Last Login</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in group.user_set.all %}
+                <tr>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{% if user.last_login %} {{ user.last_login|timesince }} ago {% else %} Never {% endif %}</td>
+                    <td>
+                        <a href="{% url 'remove_user_from_group' group.id user.id %}" 
+                           onclick="return confirm('Remove {{ user.username }} from {{ group.name }}?');">
+                            <button class="btn btn-danger">Remove</button>
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4">No members in this group.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Add Existing Member -->
+        <h5>Add Existing Member</h5>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="add_existing">
+            <div class="input-group">
+                <select name="user_id" class="form-control">
+                    {% for user in available_users %}
+                        <option value="{{ user.id }}">{{ user.username }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-success">Add</button>
+            </div>
+        </form>
+
+        <hr>
+
+        <!-- Create & Add New Member -->
+        <h5>Create New Member</h5>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="create_new">
+            <div class="mb-3">
+                <label>Username</label>
+                <input type="text" name="username" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label>Email</label>
+                <input type="email" name="email" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label>Password</label>
+                <input type="password" name="password" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Create & Add</button>
+        </form>
+    </div>
+</div>
+```
+
+---
+
+## 🔹 Updated View (`manage_group`)
+
+```python
+from django.contrib.auth.models import Group, User
+from django.contrib.auth.hashers import make_password
+
+def manage_group(request, group_id):
+    group = get_object_or_404(Group, id=group_id)
+
+    if request.method == "POST":
+        action = request.POST.get("action")
+
+        # Add existing user
+        if action == "add_existing":
+            user_id = request.POST.get("user_id")
+            if user_id:
+                user = User.objects.get(id=user_id)
+                group.user_set.add(user)
+            return redirect("manage_group", group_id=group.id)
+
+        # Create new user and add
+        elif action == "create_new":
+            username = request.POST.get("username")
+            email = request.POST.get("email")
+            password = request.POST.get("password")
+
+            if username and password:
+                new_user = User.objects.create(
+                    username=username,
+                    email=email,
+                    password=make_password(password),
+                )
+                group.user_set.add(new_user)
+            return redirect("manage_group", group_id=group.id)
+
+    # Users not in this group (for dropdown)
+    available_users = User.objects.exclude(groups=group)
+
+    return render(request, "groups/manage_group.html", {
+        "group": group,
+        "available_users": available_users,
+    })
+```
+
+---
+
+## ✅ What This Does:
+
+* **Existing User Section** → dropdown to add from available users.
+* **Create New Member Section** → admin can type username, email, password → user is created in DB and added to the group automatically.
+
+---
+
+Would you like me to also include a **password generator button** (click → auto-generates a secure password & fills the input), so admins don’t have to manually create passwords?

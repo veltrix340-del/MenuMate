@@ -1,0 +1,316 @@
+current
+
+<!-- Html -->
+<div class="dashboard">
+    <div class="stats-cards">
+        <div class="stat-card">
+            <div class="stat-title">Today's Orders</div>
+            <div class="stat-value">{{total_orders}}</div>
+            </div>
+        <div class="stat-card">
+            <div class="stat-title">Revenue per Hour</div>
+            <div class="stat-value">₹ {{ revenue|floatformat:2 }}</div>
+            </div>
+        <div class="stat-card">
+            <div class="stat-title">Revenue per Table (Today)</div>
+            <div class="stat-value">15</div>
+                    </div>
+        <div class="stat-card">
+            <div class="stat-title">Active Tables</div>
+            <div class="stat-value">5</div>
+            <div class="stat-change negative">↓ 3 from yesterday</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-title">Customer Rating</div>
+            <div class="stat-value">4.7</div>
+            <div class="stat-change positive">↑ 0.2 from last week</div>
+        </div>
+    </div>
+</div>
+
+-------------------------------------------------
+
+
+
+
+✅ 1. Collapsible Stat Groups
+
+<!--html-->
+<div class="dashboard">
+  <div class="stats-cards">
+
+    <!-- Generalized Stat Card -->
+    <div class="stat-card collapsible" onclick="toggleSubCards('paymentsSub')">
+      <div class="stat-title">Payments - Total</div>
+      <div class="stat-value">₹ {{ total_payments }}</div>
+    </div>
+
+    <!-- Sub Cards Hidden Initially -->
+    <div id="paymentsSub" class="sub-cards" style="display: none;">
+      <div class="stat-card sub-card">
+        <div class="stat-title">Payments - Cash</div>
+        <div class="stat-value">{{ cash_payments }}</div>
+      </div>
+
+      <div class="stat-card sub-card">
+        <div class="stat-title">Payments - Online</div>
+        <div class="stat-value">{{ online_payments }}</div>
+      </div>
+
+      <div class="stat-card sub-card">
+        <div class="stat-title">Pending Payments</div>
+        <div class="stat-value">{{ pending_payments }}</div>
+      </div>
+    </div>
+
+    <!-- Repeat for Orders -->
+    <div class="stat-card collapsible" onclick="toggleSubCards('ordersSub')">
+      <div class="stat-title">Orders - Total</div>
+      <div class="stat-value">{{ total_orders }}</div>
+    </div>
+
+    <div id="ordersSub" class="sub-cards" style="display: none;">
+      <div class="stat-card sub-card">
+        <div class="stat-title">Accepted Orders</div>
+        <div class="stat-value">{{ accepted_count }}</div>
+      </div>
+
+      <div class="stat-card sub-card">
+        <div class="stat-title">Ready Orders</div>
+        <div class="stat-value">{{ ready_count }}</div>
+      </div>
+
+      <div class="stat-card sub-card">
+        <div class="stat-title">Delivered Orders</div>
+        <div class="stat-value">{{ delivered_count }}</div>
+      </div>
+
+      <div class="stat-card sub-card">
+        <div class="stat-title">Pending Orders</div>
+        <div class="stat-value">{{ pending_orders }}</div>
+      </div>
+    </div>
+
+    <!-- Similarly for Tables -->
+    <div class="stat-card collapsible" onclick="toggleSubCards('tablesSub')">
+      <div class="stat-title">Tables - Total</div>
+      <div class="stat-value">10</div>
+    </div>
+
+    <div id="tablesSub" class="sub-cards" style="display: none;">
+      <div class="stat-card sub-card">
+        <div class="stat-title">Active Tables</div>
+        <div class="stat-value">{{ active_tables }}</div>
+      </div>
+
+      <div class="stat-card sub-card">
+        <div class="stat-title">Inactive Tables</div>
+        <div class="stat-value">{{ inactive_tables }}</div>
+      </div>
+    </div>
+
+    <!-- Example static single card -->
+    <div class="stat-card">
+      <div class="stat-title">Most Ordered Item</div>
+      <div class="stat-value">{{ most_ordered_item }}</div>
+    </div>
+
+  </div>
+</div>
+
+-------------------------------------------------------
+
+//css
+.sub-card {
+  margin-left: 20px; /* indent for sub cards */
+  background-color: #f9f9f9;
+  border-left: 4px solid #007bff; /* subtle highlight */
+}
+
+.collapsible {
+  cursor: pointer;
+}
+
+.sub-cards .stat-card {
+  margin-top: 5px;
+}
+
+-----------------------------------------------
+
+<script>
+  function toggleSubCards(id) {
+    var x = document.getElementById(id);
+    if (x.style.display === "none") {
+      x.style.display = "block";
+    } else {
+      x.style.display = "none";
+    }
+  }
+</script>
+
+=======================================================
+
+✅ 2. Tabbed Dashboard Sections
+
+<!-- html -->
+<div class="dashboard">
+
+  <!-- Tabs -->
+  <div class="dashboard-tabs">
+    <button class="tab-link active" onclick="showTab('overviewTab')">Overview</button>
+    <button class="tab-link" onclick="showTab('ordersTab')">Orders</button>
+    <button class="tab-link" onclick="showTab('paymentsTab')">Payments</button>
+    <button class="tab-link" onclick="showTab('tablesTab')">Tables</button>
+    <button class="tab-link" onclick="showTab('feedbackTab')">Feedback</button>
+  </div>
+
+  <!-- Tab Contents -->
+
+  <!-- Overview Tab -->
+  <div id="overviewTab" class="tab-content">
+    <div class="stats-cards">
+      <div class="stat-card">
+        <div class="stat-title">Total Customers Today</div>
+        <div class="stat-value">{{ customers_today }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-title">Most Ordered Item</div>
+        <div class="stat-value">{{ most_ordered_item }}</div>
+      </div>
+      <!-- Add more general overview stats here -->
+    </div>
+  </div>
+
+  <!-- Orders Tab -->
+  <div id="ordersTab" class="tab-content" style="display:none;">
+    <div class="stats-cards">
+      <div class="stat-card">
+        <div class="stat-title">Total Orders</div>
+        <div class="stat-value">{{ total_orders }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-title">Accepted Orders</div>
+        <div class="stat-value">{{ accepted_count }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-title">Ready Orders</div>
+        <div class="stat-value">{{ ready_count }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-title">Delivered Orders</div>
+        <div class="stat-value">{{ delivered_count }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-title">Pending Orders</div>
+        <div class="stat-value">{{ pending_orders }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Payments Tab -->
+  <div id="paymentsTab" class="tab-content" style="display:none;">
+    <div class="stats-cards">
+      <div class="stat-card">
+        <div class="stat-title">Payments - Cash</div>
+        <div class="stat-value">{{ cash_payments }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-title">Payments - Online</div>
+        <div class="stat-value">{{ online_payments }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-title">Pending Payments</div>
+        <div class="stat-value">{{ pending_payments }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tables Tab -->
+  <div id="tablesTab" class="tab-content" style="display:none;">
+    <div class="stats-cards">
+      <div class="stat-card">
+        <div class="stat-title">Active Tables</div>
+        <div class="stat-value">{{ active_tables }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-title">Inactive Tables</div>
+        <div class="stat-value">{{ inactive_tables }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Feedback Tab -->
+  <div id="feedbackTab" class="tab-content" style="display:none;">
+    <div class="stats-cards">
+      {% for feedback in payments_today %}
+      {% if feedback.feedback %}
+      <div class="stat-card">
+        <div class="stat-title">Feedback from Table {{ feedback.table_number }}</div>
+        <div class="stat-value">{{ feedback.feedback }}</div>
+      </div>
+      {% endif %}
+      {% empty %}
+      <div class="stat-card">
+        <div class="stat-title">No Feedback Available</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+
+-----------------------------------------------------
+
+//css
+.dashboard-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.tab-link {
+  padding: 8px 16px;
+  border: none;
+  background-color: #eee;
+  cursor: pointer;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.tab-link.active {
+  background-color: #007bff;
+  color: white;
+}
+
+.tab-content {
+  animation: fadeEffect 0.3s;
+}
+
+@keyframes fadeEffect {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+
+------------------------------------------------------------
+
+<script>
+  function showTab(tabId) {
+    // Hide all tab contents
+    var tabs = document.getElementsByClassName('tab-content');
+    for (var i = 0; i < tabs.length; i++) {
+      tabs[i].style.display = "none";
+    }
+
+    // Remove active class from all buttons
+    var links = document.getElementsByClassName('tab-link');
+    for (var i = 0; i < links.length; i++) {
+      links[i].classList.remove('active');
+    }
+
+    // Show selected tab and make its button active
+    document.getElementById(tabId).style.display = "block";
+    event.currentTarget.classList.add('active');
+  }
+</script>
+
+==================================================================

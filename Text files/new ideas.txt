@@ -1,0 +1,14 @@
+🌟 3. Additional suggested modules (future roadmap)
+If you plan to expand functionality later:
+
+✅ Inventory – Stock management (ingredients, supplies). Especially useful if items have stock tracking.
+
+✅ Reports – Daily/weekly revenue, category-wise sales, bestsellers.
+
+✅ Notifications – To view system alerts, low stock warnings, or unread feedback.
+
+✅ Promotions/Offers – Manage discounts or special offers for menu items.
+
+✅ Reservations – If you extend to table booking in future.
+
+✅ Payments – Detailed payment history page (optional if your Orders already include payments).

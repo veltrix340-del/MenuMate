@@ -1,0 +1,218 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Employee</title>
+  <style>
+    body {
+      font-family: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f2f5;
+      margin: 0;
+      padding: 0;
+    }
+
+    .page-wrapper {
+      max-width: 900px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+
+    .form-card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+
+    .form-header {
+      padding: 24px 32px;
+      border-bottom: 1px solid #e2e8f0;
+      background: linear-gradient(135deg, #1e3a8a, #2563eb);
+      font-size: 20px;
+      font-weight: 600;
+      color: white;
+    }
+
+    .form-body {
+      padding: 32px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px 32px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group.full {
+      grid-column: span 2;
+    }
+
+    label {
+      font-weight: 600;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: #374151;
+    }
+
+    input, select {
+      padding: 12px 14px;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      font-size: 14px;
+      background: #f9fafb;
+      transition: border 0.2s, box-shadow 0.2s;
+    }
+
+    input:focus, select:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+      outline: none;
+      background: #fff;
+    }
+
+    /* Image Preview */
+    .image-preview {
+      margin-top: 12px;
+      max-width: 180px;
+      height: 180px;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      background: #f9fafb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .image-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .form-footer {
+      padding: 20px 32px;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: flex-end;
+      gap: 14px;
+      background: #fafafa;
+    }
+
+    .btn {
+      padding: 12px 22px;
+      border-radius: 10px;
+      border: none;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #1e3a8a, #2563eb);
+      color: white;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #1e40af, #1d4ed8);
+    }
+
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #111827;
+    }
+    .btn-secondary:hover {
+      background: #d1d5db;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-wrapper">
+    <div class="form-card">
+      <div class="form-header">✏️ Edit Employee</div>
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="form-body">
+          <div class="form-group">
+            <label for="id_name">Full Name</label>
+            {{ form.name }}
+          </div>
+
+          <div class="form-group">
+            <label for="id_date_of_birth">Date of Birth</label>
+            {{ form.date_of_birth }}
+          </div>
+
+          <div class="form-group">
+            <label for="id_staff">Department</label>
+            {{ form.staff }}
+          </div>
+
+          <div class="form-group">
+            <label for="id_employment_type">Employment Type</label>
+            {{ form.employment_type }}
+          </div>
+
+          <div class="form-group">
+          <label for="id_phno">Phone Number</label>
+          {{ form.phno }}
+        </div>
+
+                  <div class="form-group">
+            <label>Status</label>
+            {{ form.is_active }} Active
+          </div>
+
+          <div class="form-group full">
+            <label for="id_emp_image">Profile Image</label>
+            {{ form.emp_image }}
+            <div class="image-preview" id="imagePreview">
+              {% if employee.emp_image %}
+                <img src="{{ employee.emp_image.url }}" alt="Profile Preview">
+              {% else %}
+                <span style="color:#9ca3af; font-size:14px;">No Image Selected</span>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <div class="form-footer">
+          <a href="{% url 'admin_dashboard' %}?page=staff&staff={{staff_filter}}" class="btn btn-secondary">Cancel</a>
+          <button type="submit" class="btn btn-primary">Update Employee</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Preview uploaded profile image
+    const fileInput = document.getElementById("id_emp_image");
+    const previewBox = document.getElementById("imagePreview");
+
+    if (fileInput) {
+      fileInput.addEventListener("change", function () {
+        const file = this.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            previewBox.innerHTML = `<img src="${e.target.result}" alt="Profile Preview">`;
+          };
+          reader.readAsDataURL(file);
+        } else {
+          previewBox.innerHTML = `<span style="color:#9ca3af; font-size:14px;">No Image Selected</span>`;
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>

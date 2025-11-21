@@ -1,0 +1,35 @@
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('customer/', views.admin_dashboard, name='admin_dashboard'),
+    path('add-menu-item/', views.add_menu_item, name='add_menu_item'),
+    path('edit-menu-item/', views.edit_menu_item, name='edit_menu_item'),
+    path('delete-menu-item/<int:item_id>/', views.delete_menu_item,name='delete_menu_item'),
+    path('', views.table_login, name='table_login'),
+    path('free-table/<int:order_id>/', views.free_table, name='free_table'),
+    path('logout/', views.secure_logout, name='secure_logout'),
+    path('check_payment_status/', views.check_payment_status, name='check_payment_status'),
+    path('admin_bill/<int:payment_id>/', views.admin_bill, name='admin_bill'),
+    path('ok_in_admin/<int:payment_id>/', views.ok_in_admin, name='ok_in_admin'),
+    path('check-order-status/<int:order_id>/', views.check_order_status, name='check_order_status'),
+    path('mark-order-notified/<int:order_id>/', views.mark_order_notified, name='mark_order_notified'),
+    path('add-table-user/', views.add_table_user, name='add_table_user'),
+    path("tables/add/", views.add_table_user, name="add_table_user"),
+    path("tables/<int:user_id>/reset/", views.reset_table_password, name="reset_table_password"),
+    path("tables/<int:user_id>/delete/", views.delete_table_user, name="delete_table_user"),
+    path("tables/<int:user_id>/logout/", views.force_logout_user, name="force_logout_user"),
+    path("force-logout-tables/", views.force_logout_all_tables, name="force_logout_all_tables"),
+    path('bill/<int:payment_id>/', views.admin_bill, name='admin_bill'),
+    path('delete-feedback/<int:payment_id>/', views.delete_feedback, name='delete_feedback'),
+    path("groups/add/", views.add_group, name="add_group"),
+    path("groups/<int:group_id>/edit/", views.edit_group, name="edit_group"),
+    path("groups/<int:group_id>/delete/", views.delete_group, name="delete_group"),
+    path("groups/<int:group_id>/manage/", views.manage_group, name="manage_group"),
+    path("groups/<int:group_id>/remove-user/<int:user_id>/", views.remove_user_from_group, name="remove_user_from_group"),
+    path('employee/toggle/<int:emp_id>/', views.toggle_employee_status, name='toggle_employee_status'),
+    path('add_employee/', views.add_employee, name='add_employee'),
+    path('edit_employee/<int:employee_id>/', views.edit_employee, name='edit_employee'),
+    path('secure_admin_logout/', views.secure_admin_logout, name='secure_admin_logout'),
+]
+

@@ -1,0 +1,14 @@
+{% if qr_code %}
+    <div style="text-align: center;">
+        <h3>Scan to Pay</h3>
+        <img src="{{ qr_code }}" alt="UPI QR Code" width="200" height="200">
+        <p><strong>Note:</strong> Use any UPI app.</p>
+    </div>
+{% endif %}
+
+
+<script>
+    setTimeout(function() {
+        window.location.href = "{% url 'confirm_payment' %}";
+    }, 10000);
+</script>

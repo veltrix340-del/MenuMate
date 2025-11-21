@@ -1,0 +1,369 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Casa Cassandra</title>
+    <link rel="icon" href="{% static 'img/logo.png' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'css/casa.css' %}" />
+</head>
+
+<body>
+    <div class="navbar-main">
+        <div class="navbar-1">
+            <h1>CASA CASSANDRA</h1>
+        </div>
+        <!-- <form method="post" action="{% url 'secure_logout' %}">
+    {% csrf_token %}
+    <button type="button" class="logout-button" onclick="showLogoutModal()">Logout</button>
+</form> -->
+    </div>
+
+    <div class="cusa-main">
+        {% if cart %}
+        <div class="cusa-0">
+            <div class="bill-1">
+                <h1>BILL</h1>
+            </div>
+            <div class="bill-2">
+                <div class="bill-heading">
+                    <span>Item</span>
+                    <span>No.</span>
+                    <span>Price</span>
+                </div>
+                <div style="overflow-y: auto; width: 100%; scrollbar-width: none; height:100% ;">
+                    {% for item in cart %}
+                        <div class="bill-row">
+                            <span>{{ item.name }}</span>
+                            <span>{{ item.quantity }}</span>
+                            <span>Rs: {{ item.total }}</span>
+                            {% if not item.ordered %}
+                                <form method="post" action="{% url 'delete_cart_item' item.uuid %}">
+                                    {% csrf_token %}
+                                    <button class="delete-btn">X</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="total">
+                    <p class="total-label">Total</p>
+                    <p class="total-price">
+                      Rs. {{ total_amount|floatformat:2 }}
+                      <span class="info-container" tabindex="0" aria-label="Information">
+                        <img src="{% static 'img/info.png' %}" class="info-icon">
+                        <span class="info-popup" role="tooltip">
+                            5% tax and 2.5% service charge will be added
+                        </span>
+                      </span>
+                    </p>
+                  </div>
+
+
+                <div class="pay">
+                    {% if order_status == 'Ready' %}
+                    <form method="post" action="{% url 'if_ready' %}">
+                        {% csrf_token %}
+                        
+                            <button type="submit" >Order</button></form>
+                        {% elif order_status == 'Accept' %}
+                    
+                    <form method="post" action="{% url 'cancel_order' %}">
+                        {% csrf_token %}
+                        <button type="submit">Cancel Order</button>
+                    </form>
+                        {% else %}
+                            <form method="post"  action="{% url 'place_order' %}">
+                                {% csrf_token %}
+                                    <button type="submit">Place Order</button>
+                        {% endif %}
+                            </form>
+
+                    <form action="{% url 'pay' %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit">Pay</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+
+
+
+        {% if show_list %}
+        <div class="cusa-1">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="error1 {{ message.tags }}">
+                        {% if message.tags == 'error' %} <img src="{% static 'img/error2.png' %}" style="height: 30px; width: auto;">
+                        <span>&nbsp;{{ message }}</span>
+                        {% else %}
+                        <img src="{% static 'img/tick.png' %}" style="height: 30px; width: auto;">
+                        <span>&nbsp;{{ message }}</span>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+<!-- 
+            <div class="preparation">
+                <div class="pending">
+                    <svg aria-label="Verified" role="img" viewBox="0 0 40 40" fill="{% if order_status in 'Accept Ready Delivered' %}green{% else %}#ccc{% endif %}">
+                        <title>Verified</title>
+                        <path d="M19.998 3.094 14.638 0l-2.972 5.15H5.432v6.354L0 14.64 3.094 20 0 25.359l5.432 3.137v5.905h5.975L14.638 40l5.36-3.094L25.358 40l3.232-5.6h6.162v-6.01L40 25.359 36.905 20 40 14.641l-5.248-3.03v-6.46h-6.419L25.358 0l-5.36 3.094Zm7.415 11.225 2.254 2.287-11.43 11.5-6.835-6.93 2.244-2.258 4.587 4.581 9.18-9.18Z" fill-rule="evenodd"></path>
+                    </svg>
+                </div>
+                <div class="pending1">
+                    <svg aria-label="Verified" role="img" viewBox="0 0 40 40" fill="{% if order_status in 'Ready Delivered' %}green{% else %}#ccc{% endif %}">
+                        <title>Verified</title>
+                        <path d="M19.998 3.094 14.638 0l-2.972 5.15H5.432v6.354L0 14.64 3.094 20 0 25.359l5.432 3.137v5.905h5.975L14.638 40l5.36-3.094L25.358 40l3.232-5.6h6.162v-6.01L40 25.359 36.905 20 40 14.641l-5.248-3.03v-6.46h-6.419L25.358 0l-5.36 3.094Zm7.415 11.225 2.254 2.287-11.43 11.5-6.835-6.93 2.244-2.258 4.587 4.581 9.18-9.18Z" fill-rule="evenodd"></path>
+                    </svg>
+                </div>
+                <div class="pending2">
+                    <svg aria-label="Verified" role="img" viewBox="0 0 40 40" fill="{% if order_status == 'Delivered' %}green{% else %}#ccc{% endif %}">
+                        <title>Verified</title>
+                        <path d="M19.998 3.094 14.638 0l-2.972 5.15H5.432v6.354L0 14.64 3.094 20 0 25.359l5.432 3.137v5.905h5.975L14.638 40l5.36-3.094L25.358 40l3.232-5.6h6.162v-6.01L40 25.359 36.905 20 40 14.641l-5.248-3.03v-6.46h-6.419L25.358 0l-5.36 3.094Zm7.415 11.225 2.254 2.287-11.43 11.5-6.835-6.93 2.244-2.258 4.587 4.581 9.18-9.18Z" fill-rule="evenodd"></path>
+                    </svg>
+                </div>
+            </div> 
+-->
+
+<div id="order-progress-bar" style="display:none;">
+    <div id="pending" class="stage">Pending</div>
+    <div id="preparing" class="stage">Preparing</div>
+    <div id="completed" class="stage">Completed</div>
+</div>
+    
+            {% if product %}
+            <div class="cusa-1-1">
+                <h1>{{ product.name }}</h1>
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" />
+                <div class="cusa-1-1-1">
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="product_id" value="{{ product.id }}">
+                        <input type="hidden" name="product_type" value="{{ product|yesno:'bite,brew' }}">
+                        <input type="number" placeholder="Select the number of items" min="1" name="quantity" class="qty">
+                        <button>Add To Cart</button>
+                    </form>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <div class="cusa-2">
+            <div class="menu">
+                <p>Menu</p>
+            </div>
+            <div class="bites">
+                <h1 class="bites-heading">Bites</h1>
+                <div class="bites-list">
+                    {% for bite in bites_items %}
+                    <a href="{% url 'product_view' 'bite' bite.id %}" style="color: #f5e6ca; text-decoration: none;{% if selected_product_id == bite.id and selected_product_type == 'bite' %} color: goldenrod;{% endif %}">
+                        <div class="bite-item"><span>{{ bite.name }}</span><span>Rs. {{ bite.price }}</span></div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="brew">
+                <h1 class="brew-heading">Brews</h1>
+                <div class="brew-list">
+                    {% for brew in brews_items %}
+                    <a href="{% url 'product_view' 'brew' brew.id %}" style="color: #f5e6ca; text-decoration: none;{% if selected_product_id == brew.id and selected_product_type == 'brew' %} color: goldenrod;{% endif %}">
+                        <div class="brew-item"><span>{{ brew.name }}</span><span>Rs. {{ brew.price }}</span></div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+<!-- Logout Confirmation Modal -->
+<div id="logoutModal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <span class="close" onclick="closeLogoutModal()">&times;</span>
+        <h2>Confirm Logout</h2>
+        <form method="post" action="{% url 'secure_logout' %}">
+            {% csrf_token %}
+            <label for="password">Enter Password to Logout:</label>
+            <input type="password" name="password" required>
+            <button type="submit">Confirm Logout</button>
+        </form>
+    </div>
+</div>
+
+<script>
+function showLogoutModal() {
+    document.getElementById("logoutModal").style.display = "block";
+}
+
+function closeLogoutModal() {
+    document.getElementById("logoutModal").style.display = "none";
+}
+</script>
+
+
+
+
+    <script>
+        // setTimeout(function () {
+        //     const alerts = document.querySelectorAll('.error1');
+        //     alerts.forEach(alert => alert.style.display = 'none');
+        // }, 3000); // Hides after 3 seconds
+  // Push current state to history so back does nothing
+history.pushState(null, null, window.location.href);
+
+window.addEventListener('popstate', function (event) {
+// Instead of going back, push the user forward again
+history.pushState(null, null, window.location.href);
+});
+
+
+</script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> -->
+<script src="{% static 'js/sweetalert2.all.min.js' %}"></script>
+
+
+<!-- Order Progress Bar -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+const orderId = "{{ current_order.id }}"; // Pass order id from context
+const bar = document.getElementById("order-progress-bar");
+const pending = document.getElementById("pending");
+const preparing = document.getElementById("preparing");
+const completed = document.getElementById("completed");
+
+let alertScheduled = false; // 🔴 Flag to prevent multiple alerts
+
+function updateOrderStatus(data) {
+const orderStatus = data.status;
+const isNotified = data.is_notified;
+
+if (orderStatus !== "None") {
+    bar.style.display = "flex";
+
+    // Reset classes
+    pending.classList.remove("active");
+    preparing.classList.remove("active");
+    completed.classList.remove("active");
+
+    if (orderStatus === "Accept") {
+    pending.classList.add("active");
+    }
+    if (orderStatus === "Ready") {
+    pending.classList.add("active");
+    preparing.classList.add("active");
+    }
+    if (orderStatus === "Delivered") {
+    pending.classList.add("active");
+    preparing.classList.add("active");
+    completed.classList.add("active");
+
+    if (!isNotified && !alertScheduled) {
+        // 🔴 Only schedule alert if not already scheduled
+        alertScheduled = true;
+        setTimeout(() => {
+        showRepeatedAlert();
+        }, 3000);
+    } else if (isNotified) {
+        bar.style.display = "none";
+    } else if (!isNotified && alertScheduled) {
+        // Do nothing – alert is already scheduled and progress bar already hidden by JS
+        console.log("Alert already scheduled, progress bar hidden.");
+    }
+    }
+}
+}
+
+function showRepeatedAlert() {
+  Swal.fire({
+    title: 'Order Update',
+    text: 'Your order will be delivered soon.',
+    icon: 'success',
+    iconColor: '#4CAF50',
+    theme: 'dark',
+    confirmButtonText: 'OK, Got it!',
+    allowOutsideClick: false, // Prevent closing by clicking outside
+    reload: false,
+    color: 'white',
+    confirmButtonColor: '#1DB954',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      bar.style.display = "none";
+
+      // Send AJAX to mark as notified
+      fetch(`/mark-order-notified/${orderId}/`, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': '{{ csrf_token }}',
+        },
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log("Marked as notified:", data);
+        alertScheduled = false; // 🔴 Reset flag after successful marking
+      })
+      .catch(error => {
+        console.error("Error:", error);
+        alertScheduled = false; // Reset flag on error to allow retry
+      });
+    } else {
+      console.log("User did not click OK, alert will repeat.");
+      alertScheduled = false; // 🔴 Reset flag so alert can be scheduled again on next poll
+    }
+  });
+}
+
+function pollOrderStatus() {
+    fetch(`/check-order-status/${orderId}/`)
+    .then(response => response.json())
+    .then(data => {
+        updateOrderStatus(data);
+        })
+        .catch(error => {
+        console.error("Error:", error);
+        });
+    }
+
+    // Start polling every 5 seconds
+    setInterval(pollOrderStatus, 5000);
+
+    // Call once immediately
+    pollOrderStatus();
+});
+</script>
+
+{% if enable_idle_redirect %}
+<script>
+  const IDLE_TIMEOUT = 10000; // 10s
+  let idleTimer;
+
+  function resetTimer() {
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(() => {
+      window.location.href = "{% url 'logo' %}";
+    }, IDLE_TIMEOUT);
+  }
+
+  // Reset on user activity
+  window.onload = resetTimer;
+  document.onmousemove = resetTimer;
+  document.onkeydown = resetTimer;
+  document.onclick = resetTimer;
+  document.onscroll = resetTimer;
+</script>
+{% endif %}
+
+
+
+</body>
+
+</html>

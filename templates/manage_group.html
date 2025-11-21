@@ -1,0 +1,206 @@
+<div class="card premium-saas-card">
+    <!-- Header -->
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <div>
+            <h3 class="fw-bold text-gradient">
+                <i class="fa-solid fa-layer-group me-2"></i> {{ group.name }}
+            </h3>
+            <small class="text-muted">Manage your group members efficiently</small>
+        </div>
+        <span class="badge member-count">{{ group.user_set.count }} Members</span>
+    </div>
+
+    <!-- Body -->
+    <div class="card-body">
+        <!-- Members Table -->
+        <h5 class="section-title">Members</h5>
+        <div class="table-responsive shadow-inner rounded-4 mb-4">
+            <table class="table align-middle table-hover premium-table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Last Login</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in group.user_set.all %}
+                    <tr>
+                        <td><strong>{{ user.username }}</strong></td>
+                        <td>{{ user.email }}</td>
+                        <td>
+                            {% if user.last_login %}
+                            <span class="badge badge-success">{{ user.last_login|timesince }} ago</span>
+                            {% else %}
+                            <span class="badge badge-secondary">Never</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            <a href="{% url 'remove_user_from_group' group.id user.id %}"
+                               onclick="return confirm('Remove {{ user.username }} from {{ group.name }}?');"
+                               class="btn btn-remove">
+                               <i class="fa-solid fa-user-slash me-1"></i> Remove
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center text-muted py-4">
+                            <i class="fa-solid fa-circle-info me-2"></i>No members in this group
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Divider -->
+        <div class="divider"></div>
+
+        <!-- Add Member Form -->
+        <h5 class="section-title">Add New Member</h5>
+        <form method="post" class="add-member-form">
+            {% csrf_token %}
+            <div class="form-row">
+                <select name="user_id" class="form-control member-select" required>
+                    <option value="" disabled selected>-- Select a user --</option>
+                    {% for user in available_users %}
+                        <option value="{{ user.id }}">{{ user.username }} ({{ user.email }})</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-add">
+                    <i class="fa-solid fa-plus me-1"></i> Add Member
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="mb-4">
+            <a href="{% url 'admin_dashboard' %}?page=settings&set_sub=group" class="btn btn-back">
+                <i class="fa-solid fa-arrow-left me-1"></i> Back to Admin
+            </a>
+        </div>
+
+<!-- FontAwesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+<style>
+/* Premium SaaS Card */
+.premium-saas-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 0;
+    overflow: hidden;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.premium-saas-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 24px 48px rgba(0,0,0,0.15);
+}
+
+/* Header */
+.card-header {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.text-gradient {
+    background: linear-gradient(45deg, #fbb034, #ffdd00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Member badge */
+.member-count {
+    background: rgba(255,255,255,0.15);
+    padding: 6px 16px;
+    border-radius: 50px;
+    font-weight: 500;
+}
+
+/* Table */
+.premium-table th {
+    font-weight: 600;
+    color: #4b5563;
+}
+.premium-table tbody tr {
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+.premium-table tbody tr:hover {
+    background: rgba(102,126,234,0.05);
+    transform: scale(1.01);
+}
+
+/* Badges */
+.badge-success {
+    background: linear-gradient(90deg, #34d399, #10b981);
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 50px;
+}
+.badge-secondary {
+    background: #d1d5db;
+    color: #374151;
+    padding: 5px 10px;
+    border-radius: 50px;
+}
+
+/* Buttons */
+.btn-remove {
+    background: linear-gradient(135deg, #ff6b6b, #f44336);
+    color: #fff;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 50px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.btn-remove:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Divider */
+.divider {
+    height: 2px;
+    background: #e5e7eb;
+    border-radius: 10px;
+    margin: 30px 0;
+}
+
+/* Add Member Form */
+.add-member-form .form-row {
+    display: flex;
+    gap: 12px;
+}
+.member-select {
+    flex: 1;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid #d1d5db;
+    font-size: 15px;
+    transition: all 0.3s;
+}
+.member-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.25rem rgba(102,126,234,0.25);
+}
+.btn-add {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+.btn-add:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(102,126,234,0.3);
+}
+</style>
